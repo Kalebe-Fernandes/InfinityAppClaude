@@ -7,15 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Sincronizacao\" />
     <Folder Include="DTOs\Autenticacao\" />
-    <Folder Include="DTOs\Fichas\" />
     <Folder Include="Servicos\Sincronizacao\" />
     <Folder Include="Servicos\Cache\" />
-    <Folder Include="Servicos\Fichas\" />
     <Folder Include="Servicos\Autenticacao\" />
     <Folder Include="Mapeadores\" />
-    <Folder Include="Validadores\FluentValidation\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

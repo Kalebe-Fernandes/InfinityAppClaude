@@ -9,13 +9,27 @@
   <ItemGroup>
     <Folder Include="BackgroundService\" />
     <Folder Include="Configuracoes\" />
-    <Folder Include="Persistencia\Repositorios\" />
-    <Folder Include="Persistencia\Migrations\" />
-    <Folder Include="Persistencia\Configuracoes\" />
-    <Folder Include="Persistencia\Contexto\" />
     <Folder Include="ServicosExternos\ApiInfinity\Handlers\" />
     <Folder Include="ServicosExternos\ApiInfinity\Endpoints\" />
     <Folder Include="ServicosExternos\Keycloak\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Polly" Version="8.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aplication\Aplication.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

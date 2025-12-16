@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="BackgroundService\" />
+    <Folder Include="Configuracoes\" />
+    <Folder Include="Persistencia\Repositorios\" />
+    <Folder Include="Persistencia\Migrations\" />
+    <Folder Include="Persistencia\Configuracoes\" />
+    <Folder Include="Persistencia\Contexto\" />
+    <Folder Include="ServicosExternos\ApiInfinity\Handlers\" />
+    <Folder Include="ServicosExternos\ApiInfinity\Endpoints\" />
+    <Folder Include="ServicosExternos\Keycloak\" />
+  </ItemGroup>
+
+</Project>

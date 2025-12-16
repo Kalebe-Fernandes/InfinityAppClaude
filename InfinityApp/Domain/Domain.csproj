@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Entidades\Sincronizacao\" />
+    <Folder Include="Entidades\Apontamentos\" />
+    <Folder Include="Entidades\Fichas\" />
+    <Folder Include="Entidades\Comum\" />
+    <Folder Include="Entidades\Base\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Interfaces\Servicos\" />
+    <Folder Include="Interfaces\Repositorios\" />
+    <Folder Include="ObjetosDeValor\" />
+  </ItemGroup>
+
+</Project>

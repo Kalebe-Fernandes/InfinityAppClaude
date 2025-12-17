@@ -36,7 +36,7 @@ public class ServicoSincronizacao(IFilaSincronizacaoRepositorio filaSincronizaca
             // Por enquanto, apenas registra o histórico
 
             historico.Finalizar(0, 0, 0, "Pull ainda não implementado");
-            _historicoRepo.Atualizar(historico);
+            await _historicoRepo.Atualizar(historico);
             await _unitOfWork.CommitAsync();
 
             return new ResultadoSincronizacaoDto
@@ -56,7 +56,7 @@ public class ServicoSincronizacao(IFilaSincronizacaoRepositorio filaSincronizaca
         {
             historico.Finalizar(0, 0, 0, $"Erro: {ex.Message}");
             historico.Status = StatusSincronizacao.Erro;
-            _historicoRepo.Atualizar(historico);
+            await _historicoRepo.Atualizar(historico);
             await _unitOfWork.CommitAsync();
 
             return new ResultadoSincronizacaoDto
@@ -102,13 +102,13 @@ public class ServicoSincronizacao(IFilaSincronizacaoRepositorio filaSincronizaca
                     // Por enquanto, apenas marca como processado
 
                     item.MarcarComoSucesso();
-                    _filaSincronizacaoRepo.Atualizar(item);
+                    await _filaSincronizacaoRepo.Atualizar(item);
                     sucessos++;
                 }
                 catch (Exception ex)
                 {
                     item.MarcarComoErro(ex.Message);
-                    _filaSincronizacaoRepo.Atualizar(item);
+                    await _filaSincronizacaoRepo.Atualizar(item);
                     erros++;
 
                     errosDetalhados.Add(new ErroSincronizacaoDto
@@ -122,7 +122,7 @@ public class ServicoSincronizacao(IFilaSincronizacaoRepositorio filaSincronizaca
             }
 
             historico.Finalizar(totalFichas, sucessos, erros, "Push concluído");
-            _historicoRepo.Atualizar(historico);
+            await _historicoRepo.Atualizar(historico);
             await _unitOfWork.CommitAsync();
 
             return new ResultadoSincronizacaoDto
@@ -143,7 +143,7 @@ public class ServicoSincronizacao(IFilaSincronizacaoRepositorio filaSincronizaca
         {
             historico.Finalizar(0, 0, 0, $"Erro: {ex.Message}");
             historico.Status = StatusSincronizacao.Erro;
-            _historicoRepo.Atualizar(historico);
+            await _historicoRepo.Atualizar(historico);
             await _unitOfWork.CommitAsync();
 
             return new ResultadoSincronizacaoDto

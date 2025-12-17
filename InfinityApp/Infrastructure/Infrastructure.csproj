@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ServicosExternos\ApiInfinity\Endpoints\**" />
+    <Compile Remove="ServicosExternos\ApiInfinity\Handlers\**" />
+    <EmbeddedResource Remove="ServicosExternos\ApiInfinity\Endpoints\**" />
+    <EmbeddedResource Remove="ServicosExternos\ApiInfinity\Handlers\**" />
+    <None Remove="ServicosExternos\ApiInfinity\Endpoints\**" />
+    <None Remove="ServicosExternos\ApiInfinity\Handlers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="BackgroundService\" />
     <Folder Include="Configuracoes\" />
-    <Folder Include="ServicosExternos\ApiInfinity\Handlers\" />
-    <Folder Include="ServicosExternos\ApiInfinity\Endpoints\" />
   </ItemGroup>
 
   <ItemGroup>

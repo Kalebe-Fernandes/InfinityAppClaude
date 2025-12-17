@@ -39,4 +39,9 @@ public class DepositoDto
     /// ID da obra (opcional para provisórios).
     /// </summary>
     public Guid? ObraId { get; set; }
+
+    /// <summary>
+    /// Nome do depósito.
+    /// </summary>
+    public string Nome { get; set; }
 }

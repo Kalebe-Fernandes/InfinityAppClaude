@@ -1,6 +1,17 @@
-﻿<Router AppAssembly="@typeof(MauiProgram).Assembly">
+@using Apresentacao.Components.Layout
+<Router AppAssembly="@typeof(Routes).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <PageTitle>Não encontrado</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <div class="not-found-container">
+                <h1>404 - Página não encontrada</h1>
+                <p>Desculpe, a página que você procura não existe.</p>
+                <a href="/" class="btn btn-primary">Voltar para o início</a>
+            </div>
+        </LayoutView>
+    </NotFound>
 </Router>

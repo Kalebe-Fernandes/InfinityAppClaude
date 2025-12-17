@@ -1,4 +1,5 @@
 using Domain.Entidades.Comum;
+using Domain.Enums;
 
 namespace Domain.Interfaces.Repositorios;
 
@@ -15,7 +16,7 @@ public interface IEquipamentoRepositorio : IRepositorio<Equipamento>
     /// <summary>
     /// Obtém equipamentos por tipo.
     /// </summary>
-    Task<IEnumerable<Equipamento>> ObterEquipamentosPorTipoAsync(Enums.TipoEquipamento tipo, Guid obraId);
+    Task<IEnumerable<Equipamento>> ObterEquipamentosPorTipoAsync(TipoEquipamento tipo, Guid obraId);
 
     /// <summary>
     /// Obtém equipamentos pré-cadastrados (provisórios).

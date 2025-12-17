@@ -57,6 +57,8 @@ public class Obra : EntidadeBase
     /// </summary>
     public ICollection<Deposito> Depositos { get; set; } = [];
 
+    public string Numero { get; set; }
+
     /// <summary>
     /// Valida se a obra está ativa e dentro do período de execução.
     /// </summary>

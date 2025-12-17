@@ -1,0 +1,192 @@
+@page "/fichas"
+
+@inject IServicoObra ServicoObra
+@inject NavigationManager Navigation
+
+<PageTitle>Fichas - InfinityApp</PageTitle>
+
+<div class="fichas-container">
+    <!-- Header -->
+    <div class="fichas-header">
+        <button class="btn btn-outline-secondary" @onclick="VoltarParaObras">
+            <i class="bi bi-arrow-left"></i>
+            Voltar
+        </button>
+        <h2>
+            <i class="bi bi-clipboard-check"></i>
+            Fichas de Serviço
+        </h2>
+    </div>
+
+    @if (_obraSelecionada != null)
+    {
+        <!-- Info da Obra -->
+        <div class="obra-info">
+            <div class="obra-info-content">
+                <h4>@_obraSelecionada.Nome</h4>
+                <p>
+                    <strong>Código:</strong> @_obraSelecionada.Codigo |
+                    <strong>Número:</strong> @_obraSelecionada.Numero
+                </p>
+            </div>
+        </div>
+
+        <!-- Categorias de Fichas -->
+        <div class="fichas-categorias">
+            <div class="categoria-card" @onclick="() => NavegarParaFicha(1)">
+                <div class="categoria-icon categoria-limpeza">
+                    <i class="bi bi-broom"></i>
+                </div>
+                <div class="categoria-info">
+                    <h5>Limpeza de Pista</h5>
+                    <p>Serviços de limpeza e preparação</p>
+                </div>
+                <div class="categoria-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="categoria-card" @onclick="() => NavegarParaFicha(2)">
+                <div class="categoria-icon categoria-viagem">
+                    <i class="bi bi-truck"></i>
+                </div>
+                <div class="categoria-info">
+                    <h5>Viagem de CB</h5>
+                    <p>Transporte de material</p>
+                </div>
+                <div class="categoria-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="categoria-card" @onclick="() => NavegarParaFicha(3)">
+                <div class="categoria-icon categoria-bota">
+                    <i class="bi bi-arrows-move"></i>
+                </div>
+                <div class="categoria-info">
+                    <h5>Bota Dentro</h5>
+                    <p>Movimentação de material</p>
+                </div>
+                <div class="categoria-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="categoria-card" @onclick="() => NavegarParaFicha(4)">
+                <div class="categoria-icon categoria-fresagem">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <div class="categoria-info">
+                    <h5>Fresagem</h5>
+                    <p>Remoção de pavimento</p>
+                </div>
+                <div class="categoria-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="categoria-card" @onclick="() => NavegarParaFicha(5)">
+                <div class="categoria-icon categoria-cbuq">
+                    <i class="bi bi-layers"></i>
+                </div>
+                <div class="categoria-info">
+                    <h5>CBUQ</h5>
+                    <p>Concreto Betuminoso Usinado a Quente</p>
+                </div>
+                <div class="categoria-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+
+            <div class="categoria-card" @onclick="() => NavegarParaFicha(6)">
+                <div class="categoria-icon categoria-micro">
+                    <i class="bi bi-droplet"></i>
+                </div>
+                <div class="categoria-info">
+                    <h5>Microrevestimento</h5>
+                    <p>Aplicação de camada selante</p>
+                </div>
+                <div class="categoria-arrow">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    }
+    else if (_carregando)
+    {
+        <div class="fichas-loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+            <p class="mt-3">Carregando informações...</p>
+        </div>
+    }
+    else
+    {
+        <div class="fichas-erro">
+            <i class="bi bi-exclamation-triangle"></i>
+            <p>Obra não encontrada.</p>
+            <button class="btn btn-primary" @onclick="VoltarParaObras">
+                Selecionar Obra
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public Guid? ObraId { get; set; }
+
+    private ObraDto? _obraSelecionada;
+    private bool _carregando = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarObra();
+    }
+
+    private async Task CarregarObra()
+    {
+        try
+        {
+            _carregando = true;
+            StateHasChanged();
+
+            if (ObraId.HasValue)
+            {
+                _obraSelecionada = await ServicoObra.ObterPorIdAsync(ObraId.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao carregar obra: {ex.Message}");
+        }
+        finally
+        {
+            _carregando = false;
+            StateHasChanged();
+        }
+    }
+
+    private void VoltarParaObras()
+    {
+        Navigation.NavigateTo("/obras");
+    }
+
+    private void NavegarParaFicha(int categoria)
+    {
+        var rota = categoria switch
+        {
+            1 => "limpeza-pista",
+            2 => "viagem-cb",
+            3 => "bota-dentro",
+            4 => "fresagem",
+            5 => "cbuq",
+            6 => "microrevestimento",
+            _ => "limpeza-pista"
+        };
+
+        Navigation.NavigateTo($"/ficha/{rota}?obraId={ObraId}");
+    }
+}

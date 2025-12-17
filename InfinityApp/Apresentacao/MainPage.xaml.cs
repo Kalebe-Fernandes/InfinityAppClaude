@@ -1,10 +1,12 @@
-﻿namespace Apresentacao
+namespace InfinityApp.Apresentacao;
+
+/// <summary>
+/// Página principal que hospeda o BlazorWebView.
+/// </summary>
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
+    public MainPage()
     {
-        public MainPage()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

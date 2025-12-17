@@ -39,8 +39,8 @@ public class AutoMapperProfile : Profile
             .ReverseMap();
 
         CreateMap<Deposito, DepositoDto>()
-            .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Coordenada != null ? src.Coordenada.Latitude : (decimal?)null))
-            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Coordenada != null ? src.Coordenada.Longitude : (decimal?)null));
+            .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Coordenada != null ? src.Coordenada.Latitude : (double?)null))
+            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Coordenada != null ? src.Coordenada.Longitude : (double?)null));
 
         CreateMap<DepositoDto, Deposito>()
             .ForMember(dest => dest.Coordenada, opt => opt.Ignore());

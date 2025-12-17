@@ -1,7 +1,6 @@
 @page "/login"
-@using Aplication.Servicos.Interfaces
-@using Infrastructure.ServicosExternos.Keycloak
-@inject IAutenticacaoService AutoServ
+
+@inject IServicoAutenticacaoApp ServicoAuth
 @inject INavegadorAutenticacao NavegadorAuth
 @inject NavigationManager Navigation
 
@@ -63,11 +62,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Verificar se já está autenticado
-        var autenticado = await AutoServ.EstaAutenticadoAsync();
+        var autenticado = await ServicoAuth.EstaAutenticadoAsync();
         if (autenticado)
         {
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/obras");
         }
     }
 
@@ -79,22 +77,17 @@
             _mensagemErro = null;
             StateHasChanged();
 
-            // Gerar URL de autenticação
-            var authUrl = await AutoServ.LoginAsync();
-
-            // Abrir navegador para autenticação
+            var authUrl = await ServicoAuth.IniciarLoginAsync();
             var callbackUrl = await NavegadorAuth.AbrirUrlAutenticacaoAsync(
                 authUrl,
                 "infinityapp://callback"
             );
 
-            // Processar callback
-            var token = await AutoServ.ProcessarCallbackAsync(callbackUrl);
+            var token = await ServicoAuth.ProcessarCallbackAsync(callbackUrl);
 
             if (token != null)
             {
-                // Redirecionar para home
-                Navigation.NavigateTo("/");
+                Navigation.NavigateTo("/obras");
             }
             else
             {

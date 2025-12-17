@@ -1,16 +1,21 @@
+using Aplication.Servicos.Autenticacao;
+using Aplication.Servicos.Cache;
+using Aplication.Servicos.Comum;
+using Aplication.Servicos.Fichas;
+using Aplication.Servicos.Interfaces;
+using Aplication.Servicos.Sincronizacao;
+using Apresentacao.Services;
+using Domain.Interfaces.Repositorios;
+using InfinityApp.Application.Mapeamentos;
+using InfinityApp.Apresentacao;
+using Infrastructure.Configuracoes;
+using Infrastructure.Persistencia.Contexto;
+using Infrastructure.Persistencia.Repositorios;
+using Infrastructure.ServicosExternos.ApiInfinity;
+using Infrastructure.ServicosExternos.ApiInfinity.Configuracao;
+using Infrastructure.ServicosExternos.Keycloak;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Infrastructure.ServicosExternos.Keycloak;
-using Apresentacao.Services;
-using Infrastructure.Persistencia.Contexto;
-using Infrastructure.Configuracoes;
-using Domain.Interfaces.Repositorios;
-using Infrastructure.Persistencia.Repositorios;
-using Aplication.Servicos.Cache;
-using Aplication.Servicos.Sincronizacao;
-using Aplication.Servicos.Fichas;
-using InfinityApp.Application.Mapeamentos;
-using Aplication.Servicos.Interfaces;
 
 namespace Apresentacao;
 
@@ -111,10 +116,44 @@ public static class MauiProgram
         builder.Services.AddScoped<ServicoFichaCBUQ>();
         builder.Services.AddScoped<ServicoFichaMicrorevestimento>();
 
+        // Serviço de Autenticação (Application)
+        builder.Services.AddScoped<IServicoAutenticacaoApp, ServicoAutenticacaoApp>();
+
+        // Serviços Comuns
+        builder.Services.AddScoped<IServicoObra, ServicoObra>();
+        builder.Services.AddScoped<IServicoServico, ServicoServico>();
+        builder.Services.AddScoped<IServicoTrecho, ServicoTrecho>();
+        builder.Services.AddScoped<IServicoMaterial, ServicoMaterial>();
+        builder.Services.AddScoped<IServicoEquipamento, ServicoEquipamento>();
+        builder.Services.AddScoped<IServicoDeposito, ServicoDeposito>();
+
         // ========================================
         // AUTOMAPPER
         // ========================================
         builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+        // ========================================
+        // API INFINITY CLIENT
+        // ========================================
+        var apiInfinityConfig = new ApiInfinityConfig
+        {
+            BaseUrl = "https://api.infinity.caiapoconstrucoes.com.br",
+            TimeoutSeconds = 30,
+            MaxRetryAttempts = 3
+        };
+
+        builder.Services.AddSingleton(apiInfinityConfig);
+        builder.Services.AddSingleton<IApiInfinityClient>(sp =>
+        {
+            var httpClient = new HttpClient();
+            var autenticacao = sp.GetRequiredService<IAutenticacaoService>();
+            return new ApiInfinityClient(
+                httpClient,
+                apiInfinityConfig,
+                autenticacao
+            );
+        });
+
 
         return builder.Build();
     }

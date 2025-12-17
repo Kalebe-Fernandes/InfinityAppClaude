@@ -39,4 +39,6 @@ public class ObraDto
     /// Indica se a obra está ativa.
     /// </summary>
     public bool Ativa { get; set; }
+
+    public string Numero { get; set; }
 }

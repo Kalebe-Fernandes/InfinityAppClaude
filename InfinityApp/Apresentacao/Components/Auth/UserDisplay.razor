@@ -1,6 +1,4 @@
-@using Aplication.DTOs.Autenticacao
-@using Aplication.Servicos.Interfaces
-@inject IAutenticacaoService AutoServ
+@inject IServicoAutenticacaoApp ServicoAuth
 @inject NavigationManager Navigation
 
 @if (_usuario != null)
@@ -37,10 +35,10 @@ else
     {
         try
         {
-            var autenticado = await AutoServ.EstaAutenticadoAsync();
+            var autenticado = await ServicoAuth.EstaAutenticadoAsync();
             if (autenticado)
             {
-                _usuario = await AutoServ.ObterInformacoesUsuarioAsync();
+                _usuario = await ServicoAuth.ObterUsuarioAsync();
                 StateHasChanged();
             }
         }

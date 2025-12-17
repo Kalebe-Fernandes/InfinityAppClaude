@@ -9,17 +9,17 @@ public class Coordenada
     /// <summary>
     /// Latitude em graus decimais (entre -90 e 90).
     /// </summary>
-    public decimal Latitude { get; }
+    public double Latitude { get; }
 
     /// <summary>
     /// Longitude em graus decimais (entre -180 e 180).
     /// </summary>
-    public decimal Longitude { get; }
+    public double Longitude { get; }
 
     /// <summary>
     /// Construtor privado para garantir validação.
     /// </summary>
-    private Coordenada(decimal latitude, decimal longitude)
+    private Coordenada(double latitude, double longitude)
     {
         Latitude = latitude;
         Longitude = longitude;
@@ -32,7 +32,7 @@ public class Coordenada
     /// <param name="longitude">Longitude em graus decimais (-180 a 180).</param>
     /// <returns>Instância válida de Coordenada.</returns>
     /// <exception cref="ArgumentException">Lançada quando os parâmetros são inválidos.</exception>
-    public static Coordenada Criar(decimal latitude, decimal longitude)
+    public static Coordenada Criar(double latitude, double longitude)
     {
         if (latitude < -90 || latitude > 90)
             throw new ArgumentException("A latitude deve estar entre -90 e 90 graus.", nameof(latitude));

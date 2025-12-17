@@ -37,13 +37,14 @@ public class Deposito : EntidadeBase
     /// Navegação: Obra à qual o depósito pertence.
     /// </summary>
     public Obra? Obra { get; set; }
+    public string Nome { get; set; }
 
     /// <summary>
     /// Define a coordenada do depósito.
     /// </summary>
-    public void DefinirCoordenada(decimal latitude, decimal longitude)
+    public void DefinirCoordenada(double latitude, double longitude)
     {
-        Coordenada = ObjetosDeValor.Coordenada.Criar(latitude, longitude);
+        Coordenada = Coordenada.Criar(latitude, longitude);
         AtualizarDataAtualizacao();
     }
 

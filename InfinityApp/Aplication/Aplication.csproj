@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Autenticacao\" />
-    <Folder Include="Servicos\Sincronizacao\" />
     <Folder Include="Servicos\Cache\" />
     <Folder Include="Servicos\Autenticacao\" />
     <Folder Include="Mapeadores\" />

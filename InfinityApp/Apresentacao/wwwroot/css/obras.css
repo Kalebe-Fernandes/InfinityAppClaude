@@ -1,0 +1,325 @@
+/* ===================================
+   ESTILOS - SELEÇÃO DE OBRAS
+   =================================== */
+
+.obras-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ===== HEADER ===== */
+
+.obras-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #eee;
+}
+
+.obras-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.obras-header i {
+    font-size: 32px;
+    color: #667eea;
+}
+
+.obras-header .btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+/* ===== BUSCA ===== */
+
+.obras-busca {
+    margin-bottom: 24px;
+}
+
+.obras-busca .input-group {
+    max-width: 500px;
+}
+
+.obras-busca .input-group-text {
+    background: white;
+    border-right: none;
+}
+
+.obras-busca .form-control {
+    border-left: none;
+    font-size: 16px;
+}
+
+.obras-busca .form-control:focus {
+    border-left: none;
+    box-shadow: none;
+}
+
+/* ===== PROGRESSO SINCRONIZAÇÃO ===== */
+
+.sincronizacao-progresso {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.progresso-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.progresso-mensagem {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+}
+
+.progresso-porcentagem {
+    font-size: 16px;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+}
+
+/* ===== LOADING ===== */
+
+.obras-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+}
+
+.obras-loading p {
+    margin-top: 16px;
+    color: #666;
+    font-size: 16px;
+}
+
+/* ===== ESTADO VAZIO ===== */
+
+.obras-vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.obras-vazio i {
+    font-size: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+}
+
+.obras-vazio p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+/* ===== LISTA DE OBRAS ===== */
+
+.obras-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+/* ===== CARD DE OBRA ===== */
+
+.obra-card {
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.obra-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+.obra-card.inativa {
+    opacity: 0.6;
+}
+
+.obra-card.inativa:hover {
+    border-color: #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== HEADER DO CARD ===== */
+
+.obra-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.obra-card-header h5 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.obra-card-header .badge {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ===== BODY DO CARD ===== */
+
+.obra-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.obra-card-body p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.obra-card-body strong {
+    color: #333;
+}
+
+.obra-descricao {
+    font-size: 13px !important;
+    color: #888 !important;
+    font-style: italic;
+    margin-top: 4px;
+}
+
+.obra-periodo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #999 !important;
+    font-size: 13px !important;
+    margin-top: 4px;
+}
+
+.obra-periodo i {
+    font-size: 14px;
+}
+
+/* ===== FOOTER DO CARD ===== */
+
+.obra-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.obra-card-footer i {
+    font-size: 20px;
+    color: #667eea;
+    transition: transform 0.3s ease;
+}
+
+.obra-card:hover .obra-card-footer i {
+    transform: translateX(4px);
+}
+
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 768px) {
+    .obras-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .obras-header .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .obras-busca .input-group {
+        max-width: 100%;
+    }
+
+    .obras-lista {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .obras-container {
+        padding: 16px;
+    }
+
+    .obras-header h2 {
+        font-size: 24px;
+    }
+
+    .obra-card {
+        padding: 16px;
+    }
+
+    .obra-card-header h5 {
+        font-size: 16px;
+    }
+}
+
+/* ===== ANIMAÇÕES ===== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.obra-card {
+    animation: fadeInUp 0.4s ease-out;
+}
+
+.obras-lista .obra-card:nth-child(1) { animation-delay: 0.05s; }
+.obras-lista .obra-card:nth-child(2) { animation-delay: 0.1s; }
+.obras-lista .obra-card:nth-child(3) { animation-delay: 0.15s; }
+.obras-lista .obra-card:nth-child(4) { animation-delay: 0.2s; }
+.obras-lista .obra-card:nth-child(5) { animation-delay: 0.25s; }
+.obras-lista .obra-card:nth-child(6) { animation-delay: 0.3s; }

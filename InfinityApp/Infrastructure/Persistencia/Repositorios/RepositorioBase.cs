@@ -45,17 +45,17 @@ public class RepositorioBase<T>(InfinityAppDbContext contexto) : IRepositorio<T>
         await _dbSet.AddRangeAsync(entidades);
     }
 
-    public virtual void Atualizar(T entidade)
+    public async virtual Task Atualizar(T entidade)
     {
         _dbSet.Update(entidade);
     }
 
-    public virtual void Remover(T entidade)
+    public async virtual Task Remover(T entidade)
     {
         _dbSet.Remove(entidade);
     }
 
-    public virtual void RemoverVarias(IEnumerable<T> entidades)
+    public async virtual Task RemoverVarias(IEnumerable<T> entidades)
     {
         _dbSet.RemoveRange(entidades);
     }

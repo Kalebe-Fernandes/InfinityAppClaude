@@ -47,21 +47,21 @@ public interface IRepositorio<T> where T : EntidadeBase
     /// Método síncrono pois apenas marca a entidade como modificada no contexto.
     /// </summary>
     /// <param name="entidade">Entidade a ser atualizada.</param>
-    void Atualizar(T entidade);
+    Task Atualizar(T entidade);
 
     /// <summary>
     /// Remove uma entidade.
     /// Método síncrono pois apenas marca a entidade para remoção no contexto.
     /// </summary>
     /// <param name="entidade">Entidade a ser removida.</param>
-    void Remover(T entidade);
+    Task Remover(T entidade);
 
     /// <summary>
     /// Remove múltiplas entidades de uma vez.
     /// Método síncrono pois apenas marca as entidades para remoção no contexto.
     /// </summary>
     /// <param name="entidades">Coleção de entidades a serem removidas.</param>
-    void RemoverVarias(IEnumerable<T> entidades);
+    Task RemoverVarias(IEnumerable<T> entidades);
 
     /// <summary>
     /// Verifica se existe alguma entidade que atende ao predicado.

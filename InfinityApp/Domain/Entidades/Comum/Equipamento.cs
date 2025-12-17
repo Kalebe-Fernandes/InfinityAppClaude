@@ -47,6 +47,7 @@ public class Equipamento : EntidadeBase
     /// Navegação: Obra à qual o equipamento pertence.
     /// </summary>
     public Obra? Obra { get; set; }
+    public string? Prefixo { get; set; }
 
     /// <summary>
     /// Verifica se o equipamento pode ser usado para execução.

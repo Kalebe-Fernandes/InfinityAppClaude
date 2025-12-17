@@ -1,7 +1,6 @@
 @page "/perfil"
-@using Aplication.DTOs.Autenticacao
-@using Aplication.Servicos.Interfaces
-@inject IAutenticacaoService AutoServ
+
+@inject IServicoAutenticacaoApp ServicoAuth
 @inject NavigationManager Navigation
 
 <PageTitle>Perfil - InfinityApp</PageTitle>
@@ -57,24 +56,6 @@
                     </label>
                     <p>@_usuario.Email</p>
                 </div>
-
-                <div class="info-item">
-                    <label>
-                        <i class="bi bi-person-badge"></i>
-                        Usuário
-                    </label>
-                    <p>@_usuario.Username</p>
-                </div>
-
-                @if (_usuario.EmailVerificado)
-                {
-                    <div class="info-item">
-                        <span class="badge bg-success">
-                            <i class="bi bi-check-circle"></i>
-                            Email Verificado
-                        </span>
-                    </div>
-                }
             </div>
 
             <!-- Ações -->
@@ -134,14 +115,14 @@
             _carregando = true;
             StateHasChanged();
 
-            var autenticado = await AutoServ.EstaAutenticadoAsync();
+            var autenticado = await ServicoAuth.EstaAutenticadoAsync();
             if (!autenticado)
             {
                 Navigation.NavigateTo("/login");
                 return;
             }
 
-            _usuario = await AutoServ.ObterInformacoesUsuarioAsync();
+            _usuario = await ServicoAuth.ObterUsuarioAsync();
         }
         catch
         {
@@ -168,7 +149,7 @@
 
     private void VoltarHome()
     {
-        Navigation.NavigateTo("/");
+        Navigation.NavigateTo("/obras");
     }
 
     private async Task RealizarLogout()
@@ -178,18 +159,8 @@
             _deslogando = true;
             StateHasChanged();
 
-            var sucesso = await AutoServ.LogoutAsync();
-
-            if (sucesso)
-            {
-                Navigation.NavigateTo("/login");
-            }
-            else
-            {
-                // Mostrar mensagem de erro
-                _deslogando = false;
-                StateHasChanged();
-            }
+            await ServicoAuth.LogoutAsync();
+            Navigation.NavigateTo("/login");
         }
         catch
         {

@@ -1,5 +1,4 @@
-@using Aplication.Servicos.Interfaces
-@inject IAutenticacaoService AutoServ
+@inject IServicoAutenticacaoApp ServicoAuth
 @inject NavigationManager Navigation
 
 @if (_autenticado)
@@ -35,11 +34,10 @@ else if (_verificando)
             _verificando = true;
             StateHasChanged();
 
-            _autenticado = await AutoServ.EstaAutenticadoAsync();
+            _autenticado = await ServicoAuth.EstaAutenticadoAsync();
 
             if (!_autenticado)
             {
-                // Redirecionar para login
                 Navigation.NavigateTo("/login");
             }
         }

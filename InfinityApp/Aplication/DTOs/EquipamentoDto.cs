@@ -44,4 +44,6 @@ public class EquipamentoDto
     /// ID da obra (opcional para provisórios).
     /// </summary>
     public Guid? ObraId { get; set; }
+
+    public string? Prefixo { get; set; }
 }

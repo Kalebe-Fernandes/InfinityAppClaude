@@ -12,19 +12,19 @@ public class CoordenadaTests
     public void Criar_ComValoresValidos_DeveCriarCoordenada()
     {
         // Arrange & Act
-        var coordenada = Coordenada.Criar(-16.6869m, -49.2648m); // Goiânia
+        var coordenada = Coordenada.Criar(-16.6869d, -49.2648d); // Goiânia
 
         // Assert
         coordenada.Should().NotBeNull();
-        coordenada.Latitude.Should().Be(-16.6869m);
-        coordenada.Longitude.Should().Be(-49.2648m);
+        coordenada.Latitude.Should().Be(-16.6869d);
+        coordenada.Longitude.Should().Be(-49.2648d);
     }
 
     [Fact]
     public void Criar_ComLatitudeInvalida_DeveLancarExcecao()
     {
         // Arrange & Act
-        Action acao = () => Coordenada.Criar(-91m, -49.2648m);
+        Action acao = () => Coordenada.Criar(-91d, -49.2648d);
 
         // Assert
         acao.Should().Throw<ArgumentException>()
@@ -35,7 +35,7 @@ public class CoordenadaTests
     public void Criar_ComLongitudeInvalida_DeveLancarExcecao()
     {
         // Arrange & Act
-        Action acao = () => Coordenada.Criar(-16.6869m, -181m);
+        Action acao = () => Coordenada.Criar(-16.6869d, -181d);
 
         // Assert
         acao.Should().Throw<ArgumentException>()
@@ -46,7 +46,7 @@ public class CoordenadaTests
     public void ToString_DeveFormatarCorretamente()
     {
         // Arrange
-        var coordenada = Coordenada.Criar(-16.686900m, -49.264800m);
+        var coordenada = Coordenada.Criar(-16.686900d, -49.264800d);
 
         // Act
         var texto = coordenada.ToString();
@@ -59,8 +59,8 @@ public class CoordenadaTests
     public void Equals_ComCoordenadasIguais_DeveRetornarTrue()
     {
         // Arrange
-        var coordenada1 = Coordenada.Criar(-16.6869m, -49.2648m);
-        var coordenada2 = Coordenada.Criar(-16.6869m, -49.2648m);
+        var coordenada1 = Coordenada.Criar(-16.6869d, -49.2648d);
+        var coordenada2 = Coordenada.Criar(-16.6869d, -49.2648d);
 
         // Act & Assert
         coordenada1.Should().Be(coordenada2);
@@ -71,8 +71,8 @@ public class CoordenadaTests
     public void Equals_ComCoordenadasDiferentes_DeveRetornarFalse()
     {
         // Arrange
-        var coordenada1 = Coordenada.Criar(-16.6869m, -49.2648m);
-        var coordenada2 = Coordenada.Criar(-15.7801m, -47.9292m); // Brasília
+        var coordenada1 = Coordenada.Criar(-16.6869d, -49.2648d);
+        var coordenada2 = Coordenada.Criar(-15.7801d, -47.9292d); // Brasília
 
         // Act & Assert
         coordenada1.Should().NotBe(coordenada2);
@@ -84,7 +84,7 @@ public class CoordenadaTests
     [InlineData(90, 180)]   // Extremos positivos
     [InlineData(0, 0)]      // Zero
     [InlineData(-23.5505, -46.6333)] // São Paulo
-    public void Criar_ComValoresNoLimite_DeveCriarCoordenada(decimal latitude, decimal longitude)
+    public void Criar_ComValoresNoLimite_DeveCriarCoordenada(double latitude, double longitude)
     {
         // Arrange & Act
         var coordenada = Coordenada.Criar(latitude, longitude);

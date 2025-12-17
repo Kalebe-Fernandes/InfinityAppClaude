@@ -40,22 +40,22 @@ public class Obra : EntidadeBase
     /// <summary>
     /// Navegação: Serviços da obra.
     /// </summary>
-    public virtual ICollection<Servico> Servicos { get; set; } = [];
+    public ICollection<Servico> Servicos { get; set; } = [];
 
     /// <summary>
     /// Navegação: Trechos da obra.
     /// </summary>
-    public virtual ICollection<Trecho> Trechos { get; set; } = [];
+    public ICollection<Trecho> Trechos { get; set; } = [];
 
     /// <summary>
     /// Navegação: Equipamentos da obra.
     /// </summary>
-    public virtual ICollection<Equipamento> Equipamentos { get; set; } = [];
+    public ICollection<Equipamento> Equipamentos { get; set; } = [];
 
     /// <summary>
     /// Navegação: Depósitos da obra.
     /// </summary>
-    public virtual ICollection<Deposito> Depositos { get; set; } = [];
+    public ICollection<Deposito> Depositos { get; set; } = [];
 
     /// <summary>
     /// Valida se a obra está ativa e dentro do período de execução.

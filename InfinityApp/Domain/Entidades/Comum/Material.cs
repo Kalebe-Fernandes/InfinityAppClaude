@@ -25,5 +25,5 @@ public class Material : EntidadeBase
     /// <summary>
     /// Navegação: Serviços que utilizam este material.
     /// </summary>
-    public virtual ICollection<Servico> Servicos { get; set; } = [];
+    public ICollection<Servico> Servicos { get; set; } = [];
 }

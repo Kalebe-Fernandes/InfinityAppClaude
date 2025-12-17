@@ -1,0 +1,118 @@
+@page "/login"
+@using Aplication.Servicos.Interfaces
+@using Infrastructure.ServicosExternos.Keycloak
+@inject IAutenticacaoService AutoServ
+@inject INavegadorAutenticacao NavegadorAuth
+@inject NavigationManager Navigation
+
+<PageTitle>Login - InfinityApp</PageTitle>
+
+<div class="login-container">
+    <div class="login-card">
+        <!-- Logo -->
+        <div class="login-logo">
+            <img src="images/logo.png" alt="InfinityApp" />
+            <h1>InfinityApp</h1>
+            <p class="subtitle">Sistema de Apontamento Digital</p>
+        </div>
+
+        <!-- Mensagem de Erro -->
+        @if (!string.IsNullOrEmpty(_mensagemErro))
+        {
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                @_mensagemErro
+            </div>
+        }
+
+        <!-- Loading -->
+        @if (_autenticando)
+        {
+            <div class="loading-container">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Autenticando...</span>
+                </div>
+                <p class="mt-3">Autenticando...</p>
+            </div>
+        }
+        else
+        {
+            <!-- Botão de Login -->
+            <button class="btn btn-primary btn-login" @onclick="RealizarLogin" disabled="@_autenticando">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Entrar com Keycloak
+            </button>
+
+            <!-- Informações -->
+            <div class="login-info">
+                <p class="text-muted">
+                    <i class="bi bi-shield-check"></i>
+                    Autenticação segura com OAuth 2.0
+                </p>
+                <p class="text-muted small">
+                    Construtora Caiapó - Infinity System
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool _autenticando = false;
+    private string? _mensagemErro;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Verificar se já está autenticado
+        var autenticado = await AutoServ.EstaAutenticadoAsync();
+        if (autenticado)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private async Task RealizarLogin()
+    {
+        try
+        {
+            _autenticando = true;
+            _mensagemErro = null;
+            StateHasChanged();
+
+            // Gerar URL de autenticação
+            var authUrl = await AutoServ.LoginAsync();
+
+            // Abrir navegador para autenticação
+            var callbackUrl = await NavegadorAuth.AbrirUrlAutenticacaoAsync(
+                authUrl,
+                "infinityapp://callback"
+            );
+
+            // Processar callback
+            var token = await AutoServ.ProcessarCallbackAsync(callbackUrl);
+
+            if (token != null)
+            {
+                // Redirecionar para home
+                Navigation.NavigateTo("/");
+            }
+            else
+            {
+                _mensagemErro = "Erro ao processar autenticação. Tente novamente.";
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            _mensagemErro = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            _mensagemErro = $"Erro inesperado: {ex.Message}";
+        }
+        finally
+        {
+            _autenticando = false;
+            StateHasChanged();
+        }
+    }
+}

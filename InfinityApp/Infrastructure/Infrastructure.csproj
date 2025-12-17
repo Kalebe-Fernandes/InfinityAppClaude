@@ -11,7 +11,6 @@
     <Folder Include="Configuracoes\" />
     <Folder Include="ServicosExternos\ApiInfinity\Handlers\" />
     <Folder Include="ServicosExternos\ApiInfinity\Endpoints\" />
-    <Folder Include="ServicosExternos\Keycloak\" />
   </ItemGroup>
 
   <ItemGroup>

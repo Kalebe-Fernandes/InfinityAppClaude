@@ -46,7 +46,7 @@ public class Equipamento : EntidadeBase
     /// <summary>
     /// Navegação: Obra à qual o equipamento pertence.
     /// </summary>
-    public virtual Obra? Obra { get; set; }
+    public Obra? Obra { get; set; }
 
     /// <summary>
     /// Verifica se o equipamento pode ser usado para execução.

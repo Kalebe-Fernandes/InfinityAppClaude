@@ -35,12 +35,12 @@ public class Servico : EntidadeBase
     /// <summary>
     /// Navegação: Obra à qual o serviço pertence.
     /// </summary>
-    public virtual Obra Obra { get; set; } = null!;
+    public Obra Obra { get; set; } = null!;
 
     /// <summary>
     /// Navegação: Materiais utilizados neste serviço.
     /// </summary>
-    public virtual ICollection<Material> Materiais { get; set; } = [];
+    public ICollection<Material> Materiais { get; set; } = [];
 
     /// <summary>
     /// Ativa o serviço.

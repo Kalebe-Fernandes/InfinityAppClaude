@@ -73,6 +73,7 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
+        <PackageReference Include="Radzen.Blazor" Version="8.4.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -91,6 +92,10 @@
       <Folder Include="Services\Formatacao\" />
       <Folder Include="wwwroot\images\" />
       <Folder Include="wwwroot\js\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

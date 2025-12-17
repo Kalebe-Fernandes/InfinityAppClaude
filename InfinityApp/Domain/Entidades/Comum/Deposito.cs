@@ -36,7 +36,7 @@ public class Deposito : EntidadeBase
     /// <summary>
     /// Navegação: Obra à qual o depósito pertence.
     /// </summary>
-    public virtual Obra? Obra { get; set; }
+    public Obra? Obra { get; set; }
 
     /// <summary>
     /// Define a coordenada do depósito.

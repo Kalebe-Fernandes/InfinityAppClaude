@@ -29,6 +29,11 @@ public class Trecho : EntidadeBase
     public bool PistaDupla { get; set; }
 
     /// <summary>
+    /// Indica se o trecho está completo, com os serviços todos feitos.
+    /// </summary>
+    public bool EstaCompleto { get; set; }
+
+    /// <summary>
     /// Estaca ou KM inicial do trecho.
     /// </summary>
     public decimal? EstacaInicial { get; set; }
@@ -46,7 +51,7 @@ public class Trecho : EntidadeBase
     /// <summary>
     /// Navegação: Obra à qual o trecho pertence.
     /// </summary>
-    public virtual Obra Obra { get; set; } = null!;
+    public Obra Obra { get; set; } = null!;
 
     /// <summary>
     /// Valida se o trecho possui pista dupla e exige seleção de pista.
@@ -68,5 +73,15 @@ public class Trecho : EntidadeBase
             return (EstacaFinal.Value - EstacaInicial.Value) * 20; // Cada estaca = 20 metros
 
         return EstacaFinal.Value - EstacaInicial.Value; // KM
+    }
+
+    public bool EstaAtivoComObraAtiva()
+    {
+        return Obra.Ativa && !EstaCompleto;
+    }
+
+    public bool EstaAtivoSemObra()
+    {
+        return !EstaCompleto && Obra == null;
     }
 }

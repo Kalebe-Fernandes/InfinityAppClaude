@@ -42,10 +42,10 @@ namespace Apresentacao
             // ========================================
             var keycloakConfig = new KeycloakConfig
             {
-                Authority = "https://auth.caiapoconstrucoes.com.br",
-                Realm = "infinity-realm",
+                Authority = "http://10.0.2.2:8080",
+                Realm = "infinityapp-teste",
                 ClientId = "infinity-app",
-                RedirectUri = "infinityapp://callback",
+                RedirectUri = "infinityapp://oauth2redirect",
                 Scopes = "openid profile email offline_access"
             };
 

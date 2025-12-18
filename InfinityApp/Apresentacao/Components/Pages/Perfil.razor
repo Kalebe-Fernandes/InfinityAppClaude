@@ -1,0 +1,171 @@
+@page "/perfil"
+
+@inject IServicoAutenticacaoApp ServicoAuth
+@inject NavigationManager Navigation
+
+<PageTitle>Perfil - InfinityApp</PageTitle>
+
+<div class="perfil-container">
+    <div class="perfil-header">
+        <h2>
+            <i class="bi bi-person-circle"></i>
+            Meu Perfil
+        </h2>
+    </div>
+
+    @if (_carregando)
+    {
+        <div class="loading-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Carregando...</span>
+            </div>
+        </div>
+    }
+    else if (_usuario == null)
+    {
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle"></i>
+            Não foi possível carregar as informações do usuário.
+        </div>
+    }
+    else
+    {
+        <!-- Card do Usuário -->
+        <div class="perfil-card">
+            <!-- Avatar -->
+            <div class="perfil-avatar">
+                <div class="avatar-circle">
+                    @GetIniciais(_usuario.Nome)
+                </div>
+            </div>
+
+            <!-- Informações -->
+            <div class="perfil-info">
+                <div class="info-item">
+                    <label>
+                        <i class="bi bi-person"></i>
+                        Nome
+                    </label>
+                    <p>@_usuario.Nome</p>
+                </div>
+
+                <div class="info-item">
+                    <label>
+                        <i class="bi bi-envelope"></i>
+                        Email
+                    </label>
+                    <p>@_usuario.Email</p>
+                </div>
+            </div>
+
+            <!-- Ações -->
+            <div class="perfil-actions">
+                <button class="btn btn-outline-primary" @onclick="VoltarHome">
+                    <i class="bi bi-house"></i>
+                    Voltar para Home
+                </button>
+
+                <button class="btn btn-danger" @onclick="RealizarLogout" disabled="@_deslogando">
+                    @if (_deslogando)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                    }
+                    else
+                    {
+                        <i class="bi bi-box-arrow-right"></i>
+                    }
+                    Sair
+                </button>
+            </div>
+        </div>
+
+        <!-- Informações da Sessão -->
+        <div class="perfil-sessao mt-4">
+            <h5>
+                <i class="bi bi-clock-history"></i>
+                Informações da Sessão
+            </h5>
+            <div class="sessao-info">
+                <p>
+                    <strong>Status:</strong>
+                    <span class="badge bg-success">Autenticado</span>
+                </p>
+                <p class="text-muted small">
+                    Sua sessão está ativa e segura.
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private UsuarioDto? _usuario;
+    private bool _carregando = true;
+    private bool _deslogando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarUsuario();
+    }
+
+    private async Task CarregarUsuario()
+    {
+        try
+        {
+            _carregando = true;
+            StateHasChanged();
+
+            var autenticado = await ServicoAuth.EstaAutenticadoAsync();
+            if (!autenticado)
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            _usuario = await ServicoAuth.ObterUsuarioAsync();
+        }
+        catch
+        {
+            _usuario = null;
+        }
+        finally
+        {
+            _carregando = false;
+            StateHasChanged();
+        }
+    }
+
+    private string GetIniciais(string nome)
+    {
+        if (string.IsNullOrEmpty(nome))
+            return "?";
+
+        var partes = nome.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (partes.Length == 1)
+            return partes[0].Substring(0, Math.Min(2, partes[0].Length)).ToUpper();
+
+        return $"{partes[0][0]}{partes[^1][0]}".ToUpper();
+    }
+
+    private void VoltarHome()
+    {
+        Navigation.NavigateTo("/obras");
+    }
+
+    private async Task RealizarLogout()
+    {
+        try
+        {
+            _deslogando = true;
+            StateHasChanged();
+
+            await ServicoAuth.LogoutAsync();
+            Navigation.NavigateTo("/login");
+        }
+        catch
+        {
+            _deslogando = false;
+            StateHasChanged();
+        }
+    }
+}

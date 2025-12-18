@@ -1,0 +1,123 @@
+@page "/ficha/fresagem"
+
+@inject IServicoObra ServicoObra
+@inject IServicoServico ServicoServico
+@inject IServicoTrecho ServicoTrecho
+@inject IServicoEquipamento ServicoEquipamento
+@inject ServicoFichaFresagem ServicoFicha
+@inject NavigationManager Navigation
+
+<PageTitle>Fresagem - InfinityApp</PageTitle>
+
+<div class="ficha-container">
+    <div class="ficha-header">
+        <button class="btn btn-outline-secondary" @onclick="Voltar"><i class="bi bi-arrow-left"></i> Voltar</button>
+        <h2><i class="bi bi-tools"></i> Fresagem</h2>
+        <button class="btn btn-success" @onclick="Salvar" disabled="@_salvando">
+            @if (_salvando) { <span class="spinner-border spinner-border-sm me-2"></span> } else { <i class="bi bi-check-lg"></i> }
+            Salvar
+        </button>
+    </div>
+
+    @if (_obraSelecionada != null)
+    {
+        <div class="ficha-form">
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-building"></i><h4>Obra</h4></div>
+                <div class="info-display"><strong>@_obraSelecionada.Nome</strong><span class="text-muted">@_obraSelecionada.Codigo</span></div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-clipboard-check"></i><h4>Serviço</h4></div>
+                <div class="form-group"><label>Selecione o Serviço *</label>
+                    <select class="form-select" @bind="_fichaDto.ServicoId"><option value="">Selecione...</option>
+                        @foreach (var s in _servicos) { <option value="@s.Id">@s.Descricao (@s.Unidade)</option> }
+                    </select>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-signpost"></i><h4>Trecho</h4></div>
+                <div class="form-group"><label>Selecione o Trecho *</label>
+                    <select class="form-select" @bind="_fichaDto.TrechoId"><option value="">Selecione...</option>
+                        @foreach (var t in _trechos) { <option value="@t.Id">@t.Descricao</option> }
+                    </select>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-truck"></i><h4>Equipamento</h4></div>
+                <div class="form-group"><label>Selecione o Equipamento *</label>
+                    <select class="form-select" @bind="_equipamentoId"><option value="">Selecione...</option>
+                        @foreach (var e in _equipamentos) { <option value="@e.Id">@e.Prefixo - @e.Placa</option> }
+                    </select>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-calendar"></i><h4>Data</h4></div>
+                <div class="form-group"><label>Data *</label><input type="date" class="form-control" @bind="_fichaDto.DataProducao" /></div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-geo-alt"></i><h4>Localização</h4></div>
+                <div class="row">
+                    <div class="col-md-6"><div class="form-group"><label>Estaca Inicial *</label><input type="number" step="0.01" class="form-control" @bind="_estacaInicial" /></div></div>
+                    <div class="col-md-6"><div class="form-group"><label>Estaca Final *</label><input type="number" step="0.01" class="form-control" @bind="_estacaFinal" /></div></div>
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-rulers"></i><h4>Medidas</h4></div>
+                <div class="form-group"><label>Espessura (cm) *</label><input type="number" step="0.1" class="form-control" @bind="_espessura" /></div>
+            </div>
+            <div class="form-section">
+                <div class="section-header"><i class="bi bi-chat-text"></i><h4>Observações</h4></div>
+                <div class="form-group"><label>Observações</label><textarea class="form-control" rows="3" @bind="_fichaDto.Observacoes"></textarea></div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="ficha-loading"><div class="spinner-border text-primary"></div><p class="mt-3">Carregando dados...</p></div>
+    }
+</div>
+
+@code {
+    [Parameter][SupplyParameterFromQuery] public Guid? ObraId { get; set; }
+    private ObraDto? _obraSelecionada;
+    private List<ServicoDto> _servicos = new();
+    private List<TrechoDto> _trechos = new();
+    private List<EquipamentoDto> _equipamentos = new();
+    private FichaFresagemDto _fichaDto = new() { DataProducao = DateTime.Now };
+    private Guid _equipamentoId;
+    private decimal _estacaInicial, _estacaFinal, _espessura;
+    private bool _salvando = false;
+
+    protected override async Task OnInitializedAsync() => await CarregarDados();
+
+    private async Task CarregarDados()
+    {
+        try
+        {
+            if (!ObraId.HasValue) { Navigation.NavigateTo("/obras"); return; }
+            _obraSelecionada = await ServicoObra.ObterPorIdAsync(ObraId.Value);
+            if (_obraSelecionada != null)
+            {
+                _fichaDto.ObraId = _obraSelecionada.Id;
+                _servicos = (await ServicoServico.ObterPorObraAsync(ObraId.Value)).ToList();
+                _trechos = (await ServicoTrecho.ObterPorObraAsync(ObraId.Value)).ToList();
+                _equipamentos = (await ServicoEquipamento.ObterPorTipoAsync("Fresadora")).ToList();
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
+    }
+
+    private async Task Salvar()
+    {
+        try { _salvando = true; StateHasChanged();
+            if (_fichaDto.ServicoId == Guid.Empty || _fichaDto.TrechoId == Guid.Empty) return;
+            await ServicoFicha.CriarAsync(_fichaDto);
+            Navigation.NavigateTo($"/fichas?obraId={ObraId}");
+        }
+        catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
+        finally { _salvando = false; StateHasChanged(); }
+    }
+
+    private void Voltar() => Navigation.NavigateTo($"/fichas?obraId={ObraId}");
+}

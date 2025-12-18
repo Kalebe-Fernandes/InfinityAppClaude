@@ -1,0 +1,116 @@
+@using Aplication.Servicos.Sincronizacao
+
+<div class="progress-indicator @CssClass">
+    @if (Visivel)
+    {
+        <div class="progress-indicator-overlay"></div>
+        <div class="progress-indicator-content">
+            <div class="progress-indicator-card">
+                <!-- Ícone -->
+                <div class="progress-icon">
+                    @if (Sucesso.HasValue)
+                    {
+                        @if (Sucesso.Value)
+                        {
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                        }
+                        else
+                        {
+                            <i class="bi bi-x-circle-fill text-danger"></i>
+                        }
+                    }
+                    else
+                    {
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Processando...</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Mensagem -->
+                <div class="progress-message">
+                    <h5>@Titulo</h5>
+                    @if (!string.IsNullOrEmpty(Mensagem))
+                    {
+                        <p>@Mensagem</p>
+                    }
+                </div>
+
+                <!-- Barra de Progresso -->
+                @if (ExibirBarraProgresso && Progresso != null)
+                {
+                    <div class="progress-bar-container">
+                        <div class="progress-info">
+                            <span>@Progresso.Mensagem</span>
+                            <span class="progress-percent">@Progresso.Porcentagem%</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped @(Sucesso.HasValue ? "" : "progress-bar-animated")"
+                                 role="progressbar"
+                                 style="width: @(Progresso.Porcentagem)%">
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Botões -->
+                @if (ChildContent != null)
+                {
+                    <div class="progress-actions">
+                        @ChildContent
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Controla a visibilidade do indicador.
+    /// </summary>
+    [Parameter]
+    public bool Visivel { get; set; }
+
+    /// <summary>
+    /// Título do indicador.
+    /// </summary>
+    [Parameter]
+    public string Titulo { get; set; } = "Processando...";
+
+    /// <summary>
+    /// Mensagem descritiva.
+    /// </summary>
+    [Parameter]
+    public string? Mensagem { get; set; }
+
+    /// <summary>
+    /// Progresso atual da operação.
+    /// </summary>
+    [Parameter]
+    public ProgressoSincronizacao? Progresso { get; set; }
+
+    /// <summary>
+    /// Indica se deve exibir a barra de progresso.
+    /// </summary>
+    [Parameter]
+    public bool ExibirBarraProgresso { get; set; } = true;
+
+    /// <summary>
+    /// Indica sucesso (true) ou falha (false) da operação. Null = em andamento.
+    /// </summary>
+    [Parameter]
+    public bool? Sucesso { get; set; }
+
+    /// <summary>
+    /// Classes CSS adicionais.
+    /// </summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// Conteúdo adicional (botões, etc).
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

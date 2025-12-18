@@ -78,10 +78,7 @@
             StateHasChanged();
 
             var authUrl = await ServicoAuth.IniciarLoginAsync();
-            var callbackUrl = await NavegadorAuth.AbrirUrlAutenticacaoAsync(
-                authUrl,
-                "infinityapp://callback"
-            );
+            var callbackUrl = await NavegadorAuth.AbrirUrlAutenticacaoAsync(authUrl, "infinityapp://callback");
 
             var tokenDto = await ServicoAuth.ProcessarCallbackAsync(callbackUrl);
 

@@ -33,8 +33,8 @@ namespace Apresentacao
             builder.Services.AddMauiBlazorWebView();
 
 #if DEBUG
-    		builder.Services.AddBlazorWebViewDeveloperTools();
-    		builder.Logging.AddDebug();
+            builder.Services.AddBlazorWebViewDeveloperTools();
+            builder.Logging.AddDebug();
 #endif
 
             // ========================================
@@ -57,7 +57,6 @@ namespace Apresentacao
 
             // SecureStorage - Implementação MAUI (Android Keystore, iOS Keychain)
             builder.Services.AddSingleton<ISecureStorageService, MauiSecureStorageService>();
-
             // Navegador - Implementação MAUI (Chrome Custom Tabs, etc)
             builder.Services.AddSingleton<INavegadorAutenticacao, MauiNavegadorAutenticacao>();
 
@@ -75,7 +74,7 @@ namespace Apresentacao
             // BANCO DE DADOS
             // ========================================
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "infinityapp.db");
-            builder.Services.AddDbContext<InfinityAppDbContext>(options =>options.UseSqlite($"Data Source={dbPath}"));
+            builder.Services.AddDbContext<InfinityAppDbContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 
             // ========================================
             // REPOSITÓRIOS
@@ -149,6 +148,17 @@ namespace Apresentacao
             // AUTOMAPPER
             // ========================================
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+            // ========================================
+            // LOGGING DO MAUI
+            // ========================================
+
+#if DEBUG
+            builder.Logging.AddDebug();
+            builder.Logging.SetMinimumLevel(LogLevel.Trace);
+#else
+        builder.Logging.SetMinimumLevel(LogLevel.Warning);
+#endif
             return builder.Build();
         }
     }

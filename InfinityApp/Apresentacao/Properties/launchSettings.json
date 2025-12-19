@@ -3,6 +3,11 @@
     "Windows Machine": {
       "commandName": "Project",
       "nativeDebugging": false
+    },
+    "Android Emulator": {
+      "commandName": "MsixPackage",
+      "nativeDebugging": true,
+      "hotReloadEnabled": true
     }
   }
 }

@@ -1,8 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Domain.Entidades.Fichas;
-using Domain.Entidades.Sincronizacao;
 using Domain.Entidades.Apontamentos;
 using Domain.Entidades.Comum;
+using Domain.Entidades.Fichas;
+using Domain.Entidades.Logging;
+using Domain.Entidades.Sincronizacao;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistencia.Contexto;
 
@@ -47,12 +48,36 @@ public class InfinityAppDbContext(DbContextOptions<InfinityAppDbContext> options
     public DbSet<FilaSincronizacao> FilaSincronizacao => Set<FilaSincronizacao>();
     public DbSet<HistoricoSincronizacao> HistoricoSincronizacao => Set<HistoricoSincronizacao>();
 
+    // Logging
+    public DbSet<EntradaLog> Logs { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         // Aplicar todas as configurações do assembly
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(InfinityAppDbContext).Assembly);
+
+        // Configuração da entidade EntradaLog
+        modelBuilder.Entity<EntradaLog>(entity =>
+        {
+            entity.ToTable("Logs");
+            entity.HasKey(e => e.Id);
+
+            // Índices para performance em consultas
+            entity.HasIndex(e => e.Timestamp).HasDatabaseName("idx_logs_timestamp");
+            entity.HasIndex(e => e.Nivel).HasDatabaseName("idx_logs_nivel");
+            entity.HasIndex(e => e.Categoria).HasDatabaseName("idx_logs_categoria");
+            entity.HasIndex(e => e.UsuarioId).HasDatabaseName("idx_logs_usuario");
+
+            // Configurações de campos
+            entity.Property(e => e.Origem).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.Mensagem).IsRequired().HasMaxLength(2000);
+            entity.Property(e => e.Excecao).HasMaxLength(5000);
+            entity.Property(e => e.ContextoJson).HasMaxLength(5000);
+            entity.Property(e => e.UsuarioId).HasMaxLength(100);
+            entity.Property(e => e.Tela).HasMaxLength(200);
+        });
 
         // Configurações globais
         ConfigurarConvencoesGlobais(modelBuilder);

@@ -1,5 +1,7 @@
 using Aplication.DTOs.Autenticacao;
 using Aplication.Servicos.Interfaces;
+using Domain.Enums;
+using Domain.Interfaces.Servicos;
 using Infrastructure.Configuracoes;
 using Infrastructure.ServicosExternos.Keycloak.Seguranca;
 
@@ -9,14 +11,19 @@ namespace Infrastructure.ServicosExternos.Keycloak;
 /// Implementação do serviço de autenticação com Keycloak.
 /// Utiliza OAuth 2.0 + OIDC + PKCE para autenticação segura.
 /// </summary>
-public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpClient, ISecureStorageService secureStorage) : IAutenticacaoService
+public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpClient, ISecureStorageService secureStorage, IServicoLog logger) : IAutenticacaoService
 {
     private readonly KeycloakConfig _config = config;
     private readonly KeycloakHttpClient _httpClient = httpClient;
     private readonly ISecureStorageService _secureStorage = secureStorage;
+    private readonly IServicoLog _logger = logger;
 
     private string? _codeVerifier;
     private string? _state;
+
+    // Evento para comunicação com a WebView
+    public event EventHandler<string>? UrlAutenticacaoGerada;
+    public event EventHandler<ResultadoAutenticacao>? AutenticacaoConcluida;
 
     /// <summary>
     /// Realiza login do usuário.
@@ -24,27 +31,65 @@ public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpC
     /// </summary>
     public async Task<string> LoginAsync()
     {
-        // Gerar PKCE
-        _codeVerifier = PkceGenerator.GerarCodeVerifier();
-        var codeChallenge = PkceGenerator.GerarCodeChallenge(_codeVerifier);
-        _state = PkceGenerator.GerarState();
-
-        // Construir URL de autorização
-        var parametros = new Dictionary<string, string>
+        try
         {
-            { "client_id", _config.ClientId },
-            { "redirect_uri", _config.RedirectUri },
-            { "response_type", "code" },
-            { "scope", _config.Scopes },
-            { "code_challenge", codeChallenge },
-            { "code_challenge_method", "S256" },
-            { "state", _state }
-        };
+            await _logger.RegistrarInformacaoAsync(
+                "ServicoAutenticacaoWebView.RealizarLoginWebViewAsync",
+                "Iniciando autenticação via WebView embarcada",
+                CategoriaLog.Autenticacao
+            );
 
-        var queryString = string.Join("&", parametros.Select(p => $"{p.Key}={Uri.EscapeDataString(p.Value)}"));
-        var authUrl = $"{_config.AuthorizationEndpoint}?{queryString}";
+            // Gerar PKCE
+            _codeVerifier = PkceGenerator.GerarCodeVerifier();
+            var codeChallenge = PkceGenerator.GerarCodeChallenge(_codeVerifier);
+            _state = PkceGenerator.GerarState();
 
-        return await Task.FromResult(authUrl);
+            await _logger.RegistrarDebugAsync(
+                    "ServicoAutenticacaoWebView.RealizarLoginWebViewAsync",
+                    "PKCE gerado com sucesso",
+                    CategoriaLog.Autenticacao,
+                    new { CodeChallengeLength = codeChallenge?.Length }
+                );
+
+            // Construir URL de autorização
+            var parametros = new Dictionary<string, string>
+            {
+                { "client_id", _config.ClientId },
+                { "redirect_uri", _config.RedirectUri },
+                { "response_type", "code" },
+                { "scope", _config.Scopes },
+                { "code_challenge", codeChallenge! },
+                { "code_challenge_method", "S256" },
+                { "state", _state }
+            };
+
+            var queryString = string.Join("&", parametros.Select(p => $"{p.Key}={Uri.EscapeDataString(p.Value)}"));
+            var authUrl = $"{_config.AuthorizationEndpoint}?{queryString}";
+
+            await _logger.RegistrarDebugAsync(
+                    "ServicoAutenticacaoWebView.RealizarLoginWebViewAsync",
+                    "URL de autorização construída",
+                    CategoriaLog.Autenticacao,
+                    new { Url = authUrl }
+                );
+
+            // 3. Disparar evento para abrir WebView
+            UrlAutenticacaoGerada?.Invoke(this, authUrl);
+
+            return await Task.FromResult(authUrl);
+        }
+        catch (Exception ex)
+        {
+            await _logger.RegistrarErroAsync(
+                "ServicoAutenticacaoWebView.RealizarLoginWebViewAsync",
+                "Erro ao iniciar autenticação WebView",
+                ex,
+                CategoriaLog.Autenticacao
+            );
+
+            return $"Erro ao iniciar autenticação: {ex.Message}";
+
+        }
     }
 
     /// <summary>
@@ -53,6 +98,13 @@ public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpC
     /// </summary>
     public async Task<TokenDto?> ProcessarCallbackAsync(string callbackUrl)
     {
+        await _logger.RegistrarInformacaoAsync(
+                "ServicoAutenticacaoWebView.ProcessarCallbackAsync",
+                "Callback recebido da WebView",
+                CategoriaLog.Autenticacao,
+                new { Url = callbackUrl }
+            );
+
         // Extrair parâmetros da URL
         var uri = new Uri(callbackUrl);
         var parametros = System.Web.HttpUtility.ParseQueryString(uri.Query);
@@ -86,12 +138,19 @@ public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpC
             return null;
         }
 
+        await _logger.RegistrarDebugAsync(
+                "ServicoAutenticacaoWebView.ProcessarCallbackAsync",
+                "Código de autorização extraído com sucesso",
+                CategoriaLog.Autenticacao,
+                new { CodeLength = code.Length });
+
         // Salvar tokens
         await _secureStorage.SalvarAccessTokenAsync(tokenResponse.AccessToken);
         await _secureStorage.SalvarRefreshTokenAsync(tokenResponse.RefreshToken);
 
         var expiration = DateTime.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
         await _secureStorage.SalvarTokenExpirationAsync(expiration);
+
 
         // Obter informações do usuário
         var userInfo = await _httpClient.ObterInformacoesUsuarioAsync(tokenResponse.AccessToken);
@@ -108,6 +167,13 @@ public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpC
         _state = null;
         _codeVerifier = null;
 
+        await _logger.RegistrarInformacaoAsync(
+                "ServicoAutenticacaoWebView.ProcessarCallbackAsync",
+                "Autenticação concluída com sucesso",
+                CategoriaLog.Autenticacao
+            );
+
+        AutenticacaoConcluida?.Invoke(this, new ResultadoAutenticacao { EhSucesso = true });
         return new TokenDto
         {
             AccessToken = tokenResponse.AccessToken,
@@ -123,6 +189,12 @@ public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpC
     {
         try
         {
+            await _logger.RegistrarInformacaoAsync(
+                "ServicoAutenticacaoWebView.RealizarLogoutAsync",
+                "Iniciando logout",
+                CategoriaLog.Autenticacao
+            );
+
             // Obter refresh token
             var refreshToken = await _secureStorage.ObterRefreshTokenAsync();
 
@@ -135,10 +207,22 @@ public class ServicoAutenticacao(KeycloakConfig config, KeycloakHttpClient httpC
             // Limpar armazenamento local
             _secureStorage.LimparTudo();
 
+            await _logger.RegistrarInformacaoAsync(
+                "ServicoAutenticacaoWebView.RealizarLogoutAsync",
+                "Logout concluído",
+                CategoriaLog.Autenticacao
+            );
+
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            await _logger.RegistrarErroAsync(
+                "ServicoAutenticacaoWebView.RealizarLogoutAsync",
+                "Erro ao realizar logout",
+                ex,
+                CategoriaLog.Autenticacao
+            );
             return false;
         }
     }

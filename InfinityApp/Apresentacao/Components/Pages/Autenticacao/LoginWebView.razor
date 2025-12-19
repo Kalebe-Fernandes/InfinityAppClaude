@@ -1,0 +1,234 @@
+@page "/login-webview"
+
+@inject IAutenticacaoService ServicoAuth
+@inject IServicoLog Logger
+@inject NavigationManager Navigation
+@inject DialogService DialogService
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<RadzenStack Gap="0" Class="rz-p-0 rz-m-0" Style="height: 100vh;">
+    
+    <!-- Cabeçalho -->
+    <RadzenCard Class="rz-background-color-primary rz-color-on-primary" Style="border-radius: 0;">
+        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem">
+            <RadzenImage Path="images/logo-infinity.png" Style="width: 60px; height: 60px;" AlternateText="InfinityApp" />
+            <RadzenText TextStyle="TextStyle.H5" Class="rz-color-on-primary">InfinityApp</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-on-primary" Style="opacity: 0.8;">
+                @mensagemStatus
+            </RadzenText>
+        </RadzenStack>
+    </RadzenCard>
+
+    <!-- WebView Container -->
+    <div style="flex: 1; position: relative; background: white;">
+        
+        @if (carregando)
+        {
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" Size="ProgressBarCircularSize.Large">
+                    <Template>
+                        <RadzenText TextStyle="TextStyle.Body2">Carregando...</RadzenText>
+                    </Template>
+                </RadzenProgressBarCircular>
+            </div>
+        }
+
+        <!-- WebView será renderizada aqui via JavaScript -->
+        <iframe @ref="iframeRef" 
+                id="authWebView" 
+                style="width: 100%; height: 100%; border: none; display: @(urlAutenticacao != null ? "block" : "none");"
+                src="@urlAutenticacao">
+        </iframe>
+    </div>
+
+    <!-- Rodapé com ações -->
+    <RadzenCard Style="border-radius: 0;">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1rem">
+            <RadzenButton 
+                Text="Cancelar" 
+                ButtonStyle="ButtonStyle.Secondary" 
+                Click="@CancelarAutenticacao"
+                Disabled="@processando" />
+        </RadzenStack>
+    </RadzenCard>
+
+</RadzenStack>
+
+@code {
+    private ElementReference iframeRef;
+    private string? urlAutenticacao;
+    private string mensagemStatus = "Iniciando autenticação...";
+    private bool carregando = true;
+    private bool processando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Logger.RegistrarInformacaoAsync(
+            "LoginWebView.OnInitializedAsync",
+            "Página de login WebView inicializada",
+            CategoriaLog.UI
+        );
+
+        // Inscrever no evento de URL gerada
+        if (ServicoAuth is ServicoAutenticacao servicoWebView)
+        {
+            servicoWebView.UrlAutenticacaoGerada += OnUrlAutenticacaoGerada;
+            servicoWebView.AutenticacaoConcluida += OnAutenticacaoConcluida;
+
+            // Iniciar autenticação
+            await servicoWebView.LoginAsync();
+        }
+        else
+        {
+            await Logger.RegistrarErroAsync(
+                "LoginWebView.OnInitializedAsync",
+                "ServicoAutenticacao não é do tipo WebView",
+                new InvalidOperationException("Tipo incorreto de serviço"),
+                CategoriaLog.UI
+            );
+            
+            mensagemStatus = "Erro: Serviço de autenticação incorreto";
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !string.IsNullOrEmpty(urlAutenticacao))
+        {
+            // Configurar interceptação de navegação via JavaScript
+            await JSRuntime.InvokeVoidAsync("setupAuthWebView", DotNetObjectReference.Create(this));
+        }
+    }
+
+    private void OnUrlAutenticacaoGerada(object? sender, string url)
+    {
+        InvokeAsync(async () =>
+        {
+            await Logger.RegistrarDebugAsync(
+                "LoginWebView.OnUrlAutenticacaoGerada",
+                "URL de autenticação recebida",
+                CategoriaLog.UI,
+                new { UrlLength = url.Length }
+            );
+
+            urlAutenticacao = url;
+            carregando = false;
+            mensagemStatus = "Autenticando no Keycloak...";
+            StateHasChanged();
+        });
+    }
+
+    [JSInvokable]
+    public async Task ProcessarNavegacao(string url)
+    {
+        try
+        {
+            await Logger.RegistrarDebugAsync(
+                "LoginWebView.ProcessarNavegacao",
+                $"Navegação detectada: {url}",
+                CategoriaLog.UI
+            );
+
+            // Verificar se é callback OAuth
+            if (url.StartsWith("infinityapp://", StringComparison.OrdinalIgnoreCase))
+            {
+                await Logger.RegistrarInformacaoAsync(
+                    "LoginWebView.ProcessarNavegacao",
+                    "Callback OAuth detectado",
+                    CategoriaLog.Autenticacao
+                );
+
+                processando = true;
+                mensagemStatus = "Processando autenticação...";
+                StateHasChanged();
+
+                if (ServicoAuth is ServicoAutenticacao servicoWebView)
+                {
+                    await servicoWebView.ProcessarCallbackAsync(url);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await Logger.RegistrarErroAsync(
+                "LoginWebView.ProcessarNavegacao",
+                "Erro ao processar navegação",
+                ex,
+                CategoriaLog.UI
+            );
+        }
+    }
+
+    private void OnAutenticacaoConcluida(object? sender, ResultadoAutenticacao resultado)
+    {
+        InvokeAsync(async () =>
+        {
+            await Logger.RegistrarInformacaoAsync(
+                "LoginWebView.OnAutenticacaoConcluida",
+                $"Autenticação concluída - Sucesso: {resultado.EhSucesso}",
+                CategoriaLog.Autenticacao
+            );
+
+            processando = false;
+
+            if (resultado.EhSucesso)
+            {
+                mensagemStatus = "Autenticado com sucesso!";
+                StateHasChanged();
+                
+                await Task.Delay(500);
+                
+                // Navegar para tela principal
+                Navigation.NavigateTo("/obras", forceLoad: true);
+            }
+            else
+            {
+                mensagemStatus = "Erro na autenticação";
+                StateHasChanged();
+
+                await Task.Delay(500);
+
+                // Mostrar erro
+                await DialogService.Alert(
+                    resultado.MensagemErro ?? "Erro desconhecido na autenticação",
+                    "Erro",
+                    new AlertOptions { OkButtonText = "OK" }
+                );
+
+                // Voltar
+                Navigation.NavigateTo("/login-webview", forceLoad: true);
+            }
+        });
+    }
+
+    private async Task CancelarAutenticacao()
+    {
+        var confirmado = await DialogService.Confirm(
+            "Deseja realmente cancelar a autenticação?",
+            "Cancelar",
+            new ConfirmOptions { OkButtonText = "Sim", CancelButtonText = "Não" }
+        );
+
+        if (confirmado == true)
+        {
+            await Logger.RegistrarInformacaoAsync(
+                "LoginWebView.CancelarAutenticacao",
+                "Usuário cancelou autenticação",
+                CategoriaLog.UI
+            );
+
+            Navigation.NavigateTo("/login-webview", forceLoad: true);
+        }
+    }
+
+    public void Dispose()
+    {
+        // Desinscrever eventos
+        if (ServicoAuth is ServicoAutenticacao servicoWebView)
+        {
+            servicoWebView.UrlAutenticacaoGerada -= OnUrlAutenticacaoGerada;
+            servicoWebView.AutenticacaoConcluida -= OnAutenticacaoConcluida;
+        }
+    }
+}

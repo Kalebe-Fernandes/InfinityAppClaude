@@ -1,0 +1,436 @@
+@page "/logs"
+
+@inject IServicoLog Logger
+@inject NotificationService NotificationService
+@inject DialogService DialogService
+
+<RadzenStack Gap="1rem">
+    
+    <!-- Cabeçalho -->
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenText TextStyle="TextStyle.H4">Logs do Sistema</RadzenText>
+            <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-secondary">
+                Visualize e analise os logs de operação do aplicativo
+            </RadzenText>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <!-- Filtros -->
+    <RadzenCard>
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            
+            <RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H3">
+                Filtros
+            </RadzenText>
+
+            <RadzenRow Gap="1rem">
+                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+                    <RadzenLabel Text="Nível" />
+                    <RadzenDropDown 
+                        @bind-Value="@nivelSelecionado" 
+                        Data="@niveisDisponiveis"
+                        TextProperty="Text"
+                        ValueProperty="Value"
+                        AllowClear="true"
+                        Placeholder="Todos os níveis"
+                        Change="@CarregarLogs"
+                        Style="width: 100%;" />
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+                    <RadzenLabel Text="Categoria" />
+                    <RadzenDropDown 
+                        @bind-Value="@categoriaSelecionada" 
+                        Data="@categoriasDisponiveis"
+                        TextProperty="Text"
+                        ValueProperty="Value"
+                        AllowClear="true"
+                        Placeholder="Todas as categorias"
+                        Change="@CarregarLogs"
+                        Style="width: 100%;" />
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+                    <RadzenLabel Text="Data Início" />
+                    <RadzenDatePicker 
+                        @bind-Value="@dataInicio" 
+                        DateFormat="dd/MM/yyyy"
+                        Change="@CarregarLogs"
+                        Style="width: 100%;" />
+                </RadzenColumn>
+
+                <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+                    <RadzenLabel Text="Data Fim" />
+                    <RadzenDatePicker 
+                        @bind-Value="@dataFim" 
+                        DateFormat="dd/MM/yyyy"
+                        Change="@CarregarLogs"
+                        Style="width: 100%;" />
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenCard>
+
+    <!-- Estatísticas -->
+    <RadzenRow Gap="1rem">
+        <RadzenColumn Size="12" SizeMD="3">
+            <RadzenCard Class="rz-background-color-info">
+                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenText TextStyle="TextStyle.H3" Class="rz-color-on-info">
+                        @estatisticas.TotalLogs
+                    </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-on-info">
+                        Total de Logs
+                    </RadzenText>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="12" SizeMD="3">
+            <RadzenCard Class="rz-background-color-danger">
+                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenText TextStyle="TextStyle.H3" Class="rz-color-on-danger">
+                        @estatisticas.TotalError
+                    </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-on-danger">
+                        Erros
+                    </RadzenText>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="12" SizeMD="3">
+            <RadzenCard Class="rz-background-color-warning">
+                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenText TextStyle="TextStyle.H3" Class="rz-color-on-warning">
+                        @estatisticas.TotalWarning
+                    </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-on-warning">
+                        Avisos
+                    </RadzenText>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+
+        <RadzenColumn Size="12" SizeMD="3">
+            <RadzenCard Class="rz-background-color-success">
+                <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" Gap="0.5rem">
+                    <RadzenText TextStyle="TextStyle.H3" Class="rz-color-on-success">
+                        @estatisticas.TotalFatal
+                    </RadzenText>
+                    <RadzenText TextStyle="TextStyle.Body2" Class="rz-color-on-success">
+                        Críticos
+                    </RadzenText>
+                </RadzenStack>
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <!-- Ações -->
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem">
+                <RadzenButton 
+                    Icon="refresh" 
+                    Text="Atualizar" 
+                    Click="@CarregarLogs"
+                    ButtonStyle="ButtonStyle.Primary" />
+                
+                <RadzenButton 
+                    Icon="file_download" 
+                    Text="Exportar" 
+                    Click="@ExportarLogs"
+                    ButtonStyle="ButtonStyle.Secondary" />
+                
+                <RadzenButton 
+                    Icon="delete" 
+                    Text="Limpar Logs Antigos" 
+                    Click="@LimparLogsAntigos"
+                    ButtonStyle="ButtonStyle.Danger" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+
+    <!-- Lista de Logs -->
+    <RadzenCard>
+        @if (carregando)
+        {
+            <RadzenStack AlignItems="AlignItems.Center" Gap="1rem" Class="rz-p-12">
+                <RadzenProgressBarCircular ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+                <RadzenText TextStyle="TextStyle.Body1">Carregando logs...</RadzenText>
+            </RadzenStack>
+        }
+        else if (logs == null || !logs.Any())
+        {
+            <RadzenStack AlignItems="AlignItems.Center" Gap="1rem" Class="rz-p-12">
+                <RadzenIcon Icon="info" Style="font-size: 3rem;" />
+                <RadzenText TextStyle="TextStyle.Body1">Nenhum log encontrado</RadzenText>
+            </RadzenStack>
+        }
+        else
+        {
+            <RadzenDataList 
+                Data="@logs" 
+                TItem="EntradaLog"
+                PageSize="20"
+                AllowPaging="true"
+                PagerHorizontalAlign="HorizontalAlign.Center">
+                <Template Context="log">
+                    <RadzenCard Style="margin-bottom: 0.5rem; cursor: pointer;" 
+                                @onclick="@(() => MostrarDetalhesLog(log))">
+                        <RadzenRow Gap="0.5rem">
+                            <RadzenColumn Size="12">
+                                <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Start">
+                                    
+                                    <!-- Indicador de Nível -->
+                                    <div style="width: 4px; height: 100%; background-color: @ObterCorNivel(log.Nivel); margin-right: 0.5rem;"></div>
+                                    
+                                    <!-- Conteúdo -->
+                                    <RadzenStack Orientation="Orientation.Vertical" Gap="0.25rem" Style="flex: 1;">
+                                        
+                                        <!-- Timestamp, Nível e Categoria -->
+                                        <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center">
+                                            <RadzenBadge 
+                                                Text="@log.Timestamp.ToString("dd/MM HH:mm:ss")" 
+                                                BadgeStyle="BadgeStyle.Light" />
+                                            <RadzenBadge 
+                                                Text="@log.Nivel.ToString()" 
+                                                BadgeStyle="@ObterBadgeStyleNivel(log.Nivel)" />
+                                            <RadzenBadge 
+                                                Text="@log.Categoria.ToString()" 
+                                                BadgeStyle="BadgeStyle.Secondary" />
+                                        </RadzenStack>
+
+                                        <!-- Origem -->
+                                        <RadzenText TextStyle="TextStyle.Subtitle2" Style="font-weight: 600;">
+                                            @log.Origem
+                                        </RadzenText>
+
+                                        <!-- Mensagem -->
+                                        <RadzenText TextStyle="TextStyle.Body2">
+                                            @log.Mensagem
+                                        </RadzenText>
+
+                                        <!-- Informações Adicionais -->
+                                        @if (!string.IsNullOrEmpty(log.UsuarioId) || !string.IsNullOrEmpty(log.Tela))
+                                        {
+                                            <RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem" AlignItems="AlignItems.Center">
+                                                @if (!string.IsNullOrEmpty(log.UsuarioId))
+                                                {
+                                                    <RadzenText TextStyle="TextStyle.Caption" Class="rz-color-secondary">
+                                                        <RadzenIcon Icon="person" Style="font-size: 0.875rem;" /> @log.UsuarioId
+                                                    </RadzenText>
+                                                }
+                                                @if (!string.IsNullOrEmpty(log.Tela))
+                                                {
+                                                    <RadzenText TextStyle="TextStyle.Caption" Class="rz-color-secondary">
+                                                        <RadzenIcon Icon="screen_share" Style="font-size: 0.875rem;" /> @log.Tela
+                                                    </RadzenText>
+                                                }
+                                            </RadzenStack>
+                                        }
+                                    </RadzenStack>
+                                </RadzenStack>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenCard>
+                </Template>
+            </RadzenDataList>
+        }
+    </RadzenCard>
+
+</RadzenStack>
+
+@code {
+
+    private List<EntradaLog>? logs;
+    private EstatisticasLog estatisticas = new();
+    private bool carregando = true;
+
+    // Filtros
+    private NivelLog? nivelSelecionado;
+    private CategoriaLog? categoriaSelecionada;
+    private DateTime? dataInicio = DateTime.Today.AddDays(-7);
+    private DateTime? dataFim = DateTime.Today.AddDays(1);
+
+    // Dados para dropdowns
+    private List<(string Text, NivelLog? Value)> niveisDisponiveis = new();
+    private List<(string Text, CategoriaLog? Value)> categoriasDisponiveis = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Inicializar dropdowns
+        niveisDisponiveis = Enum.GetValues<NivelLog>()
+            .Select(n => (n.ToString(), (NivelLog?)n))
+            .ToList();
+
+        categoriasDisponiveis = Enum.GetValues<CategoriaLog>()
+            .Select(c => (c.ToString(), (CategoriaLog?)c))
+            .ToList();
+
+        await CarregarLogs();
+    }
+
+    private async Task CarregarLogs()
+    {
+        try
+        {
+            carregando = true;
+            StateHasChanged();
+
+            // Carregar logs
+            var logsCarregados = await Logger.ObterLogsAsync(
+                dataInicio ?? DateTime.Today.AddDays(-30),
+                dataFim
+            );
+
+            // Aplicar filtros
+            if (nivelSelecionado.HasValue)
+            {
+                logsCarregados = logsCarregados.Where(l => l.Nivel == nivelSelecionado.Value);
+            }
+
+            if (categoriaSelecionada.HasValue)
+            {
+                logsCarregados = logsCarregados.Where(l => l.Categoria == categoriaSelecionada.Value);
+            }
+
+            logs = logsCarregados.ToList();
+
+            // Carregar estatísticas
+            estatisticas = await Logger.ObterEstatisticasAsync(
+                dataInicio ?? DateTime.Today.AddDays(-30),
+                dataFim
+            );
+
+            carregando = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await Logger.RegistrarErroAsync(
+                "VisualizadorLogs.CarregarLogs",
+                "Erro ao carregar logs",
+                ex,
+                CategoriaLog.UI
+            );
+
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro",
+                Detail = "Erro ao carregar logs",
+                Duration = 4000
+            });
+
+            carregando = false;
+        }
+    }
+
+    private async Task ExportarLogs()
+    {
+        try
+        {
+            var caminho = await Logger.ExportarLogsAsync(
+                dataInicio ?? DateTime.Today.AddDays(-30),
+                dataFim
+            );
+
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Success,
+                Summary = "Sucesso",
+                Detail = $"Logs exportados para: {caminho}",
+                Duration = 8000
+            });
+        }
+        catch (Exception ex)
+        {
+            await Logger.RegistrarErroAsync(
+                "VisualizadorLogs.ExportarLogs",
+                "Erro ao exportar logs",
+                ex,
+                CategoriaLog.UI
+            );
+
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Erro",
+                Detail = "Erro ao exportar logs",
+                Duration = 4000
+            });
+        }
+    }
+
+    private async Task LimparLogsAntigos()
+    {
+        var confirmado = await DialogService.Confirm(
+            "Deseja limpar logs com mais de 30 dias?",
+            "Confirmar Limpeza",
+            new ConfirmOptions { OkButtonText = "Sim", CancelButtonText = "Não" }
+        );
+
+        if (confirmado == true)
+        {
+            try
+            {
+                await Logger.LimparLogsAntigosAsync(DateTime.Today.AddDays(-30));
+                await CarregarLogs();
+
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Sucesso",
+                    Detail = "Logs antigos removidos",
+                    Duration = 4000
+                });
+            }
+            catch (Exception ex)
+            {
+                await Logger.RegistrarErroAsync(
+                    "VisualizadorLogs.LimparLogsAntigos",
+                    "Erro ao limpar logs",
+                    ex,
+                    CategoriaLog.UI
+                );
+
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = "Erro",
+                    Detail = "Erro ao limpar logs",
+                    Duration = 4000
+                });
+            }
+        }
+    }
+
+    private async Task MostrarDetalhesLog(EntradaLog log)
+    {
+        await DialogService.Alert(log.ToString(), "Detalhes do Log", new AlertOptions { OkButtonText = "Fechar" });
+    }
+
+    private string ObterCorNivel(NivelLog nivel) => nivel switch
+    {
+        NivelLog.Trace => "#9E9E9E",
+        NivelLog.Debug => "#2196F3",
+        NivelLog.Information => "#4CAF50",
+        NivelLog.Warning => "#FF9800",
+        NivelLog.Error => "#F44336",
+        NivelLog.Fatal => "#9C27B0",
+        _ => "#000000"
+    };
+
+    private BadgeStyle ObterBadgeStyleNivel(NivelLog nivel) => nivel switch
+    {
+        NivelLog.Trace => BadgeStyle.Light,
+        NivelLog.Debug => BadgeStyle.Info,
+        NivelLog.Information => BadgeStyle.Success,
+        NivelLog.Warning => BadgeStyle.Warning,
+        NivelLog.Error => BadgeStyle.Danger,
+        NivelLog.Fatal => BadgeStyle.Danger,
+        _ => BadgeStyle.Secondary
+    };
+}

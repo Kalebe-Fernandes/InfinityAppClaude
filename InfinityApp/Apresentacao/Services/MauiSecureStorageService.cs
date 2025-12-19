@@ -13,6 +13,7 @@ public class MauiSecureStorageService : ISecureStorageService
 {
     private const string AccessTokenKey = "infinity_access_token";
     private const string RefreshTokenKey = "infinity_refresh_token";
+    private const string IdTokenKey = "infinity_id_token";
     private const string TokenExpirationKey = "infinity_token_expiration";
     private const string UserIdKey = "infinity_user_id";
     private const string UserEmailKey = "infinity_user_email";
@@ -40,6 +41,14 @@ public class MauiSecureStorageService : ISecureStorageService
     public async Task SalvarRefreshTokenAsync(string refreshToken)
     {
         await SecureStorage.Default.SetAsync(RefreshTokenKey, refreshToken);
+    }
+
+    /// <summary>
+    /// Grava o identificador do token ID.
+    /// </summary>
+    public async Task SalvarIdTokenAsync(string idToken)
+    {
+        await SecureStorage.Default.SetAsync(IdTokenKey, idToken);
     }
 
     /// <summary>

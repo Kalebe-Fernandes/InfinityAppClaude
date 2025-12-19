@@ -71,5 +71,10 @@ public interface ISecureStorageService
     /// Verifica se existe um usuário autenticado.
     /// </summary>
     Task<bool> ExisteUsuarioAutenticadoAsync();
+
+    /// <summary>
+    /// Grava o identificador do token ID.
+    /// </summary>
+    Task SalvarIdTokenAsync(string idToken);
 }
 

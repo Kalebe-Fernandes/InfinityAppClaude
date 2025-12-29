@@ -20,7 +20,7 @@ public class Material : EntidadeBase
     /// <summary>
     /// Unidade de medida do material (ex: "m³", "ton").
     /// </summary>
-    public string Unidade { get; set; } = string.Empty;
+    public string UnidadeMedida { get; set; } = string.Empty;
 
     /// <summary>
     /// Navegação: Serviços que utilizam este material.

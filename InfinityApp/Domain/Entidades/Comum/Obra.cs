@@ -18,11 +18,6 @@ public class Obra : EntidadeBase
     public string Nome { get; set; } = string.Empty;
 
     /// <summary>
-    /// Descrição detalhada da obra.
-    /// </summary>
-    public string? Descricao { get; set; }
-
-    /// <summary>
     /// Data de início da obra.
     /// </summary>
     public DateTime DataInicio { get; set; }
@@ -56,8 +51,6 @@ public class Obra : EntidadeBase
     /// Navegação: Depósitos da obra.
     /// </summary>
     public ICollection<Deposito> Depositos { get; set; } = [];
-
-    public string Numero { get; set; }
 
     /// <summary>
     /// Valida se a obra está ativa e dentro do período de execução.

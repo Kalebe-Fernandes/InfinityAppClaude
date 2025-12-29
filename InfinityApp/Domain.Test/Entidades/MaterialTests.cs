@@ -28,13 +28,13 @@ public class MaterialTests
         {
             Codigo = "MAT001",
             Descricao = "CBUQ Usinado Quente",
-            Unidade = "t"
+            UnidadeMedida = "t"
         };
 
         // Assert
         material.Codigo.Should().Be("MAT001");
         material.Descricao.Should().Be("CBUQ Usinado Quente");
-        material.Unidade.Should().Be("t");
+        material.UnidadeMedida.Should().Be("t");
     }
 
     [Theory]
@@ -50,11 +50,11 @@ public class MaterialTests
         {
             Codigo = "MAT001",
             Descricao = descricao,
-            Unidade = unidade
+            UnidadeMedida = unidade
         };
 
         // Assert
-        material.Unidade.Should().Be(unidade);
+        material.UnidadeMedida.Should().Be(unidade);
     }
 
     [Fact]

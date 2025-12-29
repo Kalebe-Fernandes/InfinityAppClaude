@@ -23,7 +23,7 @@ public class MaterialConfiguration : IEntityTypeConfiguration<Material>
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(m => m.Unidade)
+        builder.Property(m => m.UnidadeMedida)
             .IsRequired()
             .HasMaxLength(20);
 

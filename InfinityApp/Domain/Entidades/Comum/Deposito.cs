@@ -14,9 +14,9 @@ public class Deposito : EntidadeBase
     public string Codigo { get; set; } = string.Empty;
 
     /// <summary>
-    /// Descrição do depósito (ex: "Depósito Central - KM 25").
+    /// Nome do depósito (ex: "Depósito Central - KM 25").
     /// </summary>
-    public string Descricao { get; set; } = string.Empty;
+    public string Nome { get; set; } = string.Empty;
 
     /// <summary>
     /// Coordenada geográfica do depósito.
@@ -37,7 +37,11 @@ public class Deposito : EntidadeBase
     /// Navegação: Obra à qual o depósito pertence.
     /// </summary>
     public Obra? Obra { get; set; }
-    public string Nome { get; set; }
+
+    /// <summary>
+    /// Navegação: Trechos da obra.
+    /// </summary>
+    public ICollection<Trecho> Trechos { get; set; } = [];
 
     /// <summary>
     /// Define a coordenada do depósito.

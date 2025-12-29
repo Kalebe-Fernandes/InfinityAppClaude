@@ -13,14 +13,14 @@ public class Servico : EntidadeBase
     public string Codigo { get; set; } = string.Empty;
 
     /// <summary>
-    /// Descrição do serviço (ex: "Limpeza de Pista", "Transporte de Material CB").
+    /// Nome do serviço (ex: "Limpeza de Pista", "Transporte de Material CB").
     /// </summary>
-    public string Descricao { get; set; } = string.Empty;
+    public string Nome { get; set; } = string.Empty;
 
     /// <summary>
     /// Unidade de medida do serviço (ex: "m²", "m³", "km").
     /// </summary>
-    public string Unidade { get; set; } = string.Empty;
+    public string UnidadeMedida { get; set; } = string.Empty;
 
     /// <summary>
     /// Indica se o serviço está ativo.

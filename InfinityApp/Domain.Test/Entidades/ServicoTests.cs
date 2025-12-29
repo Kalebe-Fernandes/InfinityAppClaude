@@ -29,16 +29,16 @@ public class ServicoTests
         var servico = new Servico
         {
             Codigo = "SRV001",
-            Descricao = "Limpeza de Pista",
-            Unidade = "m²",
+            Nome = "Limpeza de Pista",
+            UnidadeMedida = "m²",
             ObraId = obraId,
             Ativo = true
         };
 
         // Assert
         servico.Codigo.Should().Be("SRV001");
-        servico.Descricao.Should().Be("Limpeza de Pista");
-        servico.Unidade.Should().Be("m²");
+        servico.Nome.Should().Be("Limpeza de Pista");
+        servico.UnidadeMedida.Should().Be("m²");
         servico.ObraId.Should().Be(obraId);
         servico.Ativo.Should().BeTrue();
     }
@@ -81,12 +81,12 @@ public class ServicoTests
         var servico = new Servico
         {
             Codigo = "SRV001",
-            Descricao = descricao,
-            Unidade = unidade
+            Nome = descricao,
+            UnidadeMedida = unidade
         };
 
         // Assert
-        servico.Unidade.Should().Be(unidade);
+        servico.UnidadeMedida.Should().Be(unidade);
     }
 
     [Fact]

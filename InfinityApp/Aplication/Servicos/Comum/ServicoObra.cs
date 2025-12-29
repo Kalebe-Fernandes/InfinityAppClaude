@@ -58,8 +58,7 @@ public class ServicoObra(IObraRepositorio repositorio, IMapper mapper) : IServic
         var termoLower = termo.ToLower();
         var obrasFiltradas = todasObras.Where(o =>
             o.Nome.Contains(termoLower, StringComparison.CurrentCultureIgnoreCase) ||
-            o.Codigo.Contains(termoLower, StringComparison.CurrentCultureIgnoreCase) ||
-            o.Numero.Contains(termoLower, StringComparison.CurrentCultureIgnoreCase)
+            o.Codigo.Contains(termoLower, StringComparison.CurrentCultureIgnoreCase)
         );
 
         return _mapper.Map<IEnumerable<ObraDto>>(obrasFiltradas);

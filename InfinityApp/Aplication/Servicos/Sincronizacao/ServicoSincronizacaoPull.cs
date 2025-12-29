@@ -88,7 +88,6 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
             {
                 // Atualizar obra existente
                 obraExistente.Nome = obraApi.Nome;
-                obraExistente.Descricao = obraApi.Descricao;
                 obraExistente.DataInicio = obraApi.DataInicio;
                 obraExistente.DataFim = obraApi.DataFim;
 
@@ -105,9 +104,7 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
                 var novaObra = new Obra
                 {
                     Codigo = obraApi.Codigo,
-                    Numero = obraApi.Numero,
                     Nome = obraApi.Nome,
-                    Descricao = obraApi.Descricao,
                     DataInicio = obraApi.DataInicio,
                     DataFim = obraApi.DataFim,
                     Ativa = obraApi.Ativa
@@ -141,8 +138,8 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
 
                 if (servicoExistente != null)
                 {
-                    servicoExistente.Descricao = servicoApi.Descricao;
-                    servicoExistente.Unidade = servicoApi.Unidade;
+                    servicoExistente.Nome = servicoApi.Descricao;
+                    servicoExistente.UnidadeMedida = servicoApi.Unidade;
                     servicoExistente.ObraId = obra.Id;
 
                     if (servicoApi.Ativo)
@@ -157,8 +154,8 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
                     var novoServico = new Servico
                     {
                         Codigo = servicoApi.Codigo,
-                        Descricao = servicoApi.Descricao,
-                        Unidade = servicoApi.Unidade,
+                        Nome = servicoApi.Descricao,
+                        UnidadeMedida = servicoApi.Unidade,
                         ObraId = obra.Id,
                         Ativo = servicoApi.Ativo
                     };
@@ -240,7 +237,7 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
             if (materialExistente != null)
             {
                 materialExistente.Descricao = materialApi.Descricao;
-                materialExistente.Unidade = materialApi.Unidade;
+                materialExistente.UnidadeMedida = materialApi.Unidade;
                 await _materialRepositorio.Atualizar(materialExistente);
             }
             else
@@ -249,7 +246,7 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
                 {
                     Codigo = materialApi.Codigo,
                     Descricao = materialApi.Descricao,
-                    Unidade = materialApi.Unidade
+                    UnidadeMedida = materialApi.Unidade
                 };
 
                 await _materialRepositorio.AdicionarAsync(novoMaterial);
@@ -320,7 +317,7 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
             if (depositoExistente != null)
             {
                 depositoExistente.Nome = depositoApi.Nome;
-                depositoExistente.Descricao = depositoApi.Descricao!;
+                depositoExistente.Nome = depositoApi.Descricao!;
                 depositoExistente.Provisorio = depositoApi.Provisorio;
 
                 if (depositoApi.Latitude.HasValue && depositoApi.Longitude.HasValue)
@@ -339,7 +336,7 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
                 {
                     Codigo = depositoApi.Codigo,
                     Nome = depositoApi.Nome,
-                    Descricao = depositoApi.Descricao!,
+                    Nome = depositoApi.Descricao!,
                     Provisorio = depositoApi.Provisorio
                 };
 

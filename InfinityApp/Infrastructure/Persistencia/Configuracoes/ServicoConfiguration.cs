@@ -19,11 +19,11 @@ public class ServicoConfiguration : IEntityTypeConfiguration<Servico>
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.Property(s => s.Descricao)
+        builder.Property(s => s.Nome)
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(s => s.Unidade)
+        builder.Property(s => s.UnidadeMedida)
             .IsRequired()
             .HasMaxLength(20);
 

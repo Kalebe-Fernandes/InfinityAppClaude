@@ -6,6 +6,7 @@ using Aplication.Servicos.Interfaces;
 using Aplication.Servicos.Sincronizacao;
 using Apresentacao.Services;
 using Domain.Interfaces.Repositorios;
+using Domain.Interfaces.Servicos;
 using InfinityApp.Application.Mapeamentos;
 using Infrastructure.Configuracoes;
 using Infrastructure.Persistencia.Contexto;
@@ -13,6 +14,7 @@ using Infrastructure.Persistencia.Repositorios;
 using Infrastructure.ServicosExternos.ApiInfinity;
 using Infrastructure.ServicosExternos.ApiInfinity.Configuracao;
 using Infrastructure.ServicosExternos.Keycloak;
+using Infrastructure.ServicosExternos.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -135,6 +137,7 @@ namespace Apresentacao
             builder.Services.AddScoped<IServicoMaterial, ServicoMaterial>();
             builder.Services.AddScoped<IServicoEquipamento, ServicoEquipamento>();
             builder.Services.AddScoped<IServicoDeposito, ServicoDeposito>();
+            builder.Services.AddScoped<IServicoLog, ServicoLog>();
 
             // Serviços de Fichas
             builder.Services.AddScoped<ServicoFichaLimpezaPista>();

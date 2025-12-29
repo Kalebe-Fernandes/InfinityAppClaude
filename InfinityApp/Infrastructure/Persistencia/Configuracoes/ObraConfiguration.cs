@@ -23,9 +23,6 @@ public class ObraConfiguration : IEntityTypeConfiguration<Obra>
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.Property(o => o.Descricao)
-            .HasMaxLength(1000);
-
         builder.Property(o => o.DataInicio)
             .IsRequired();
 

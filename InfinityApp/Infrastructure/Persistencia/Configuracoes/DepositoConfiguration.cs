@@ -19,7 +19,7 @@ public class DepositoConfiguration : IEntityTypeConfiguration<Deposito>
             .IsRequired()
             .HasMaxLength(50);
 
-        builder.Property(d => d.Descricao)
+        builder.Property(d => d.Nome)
             .IsRequired()
             .HasMaxLength(200);
 

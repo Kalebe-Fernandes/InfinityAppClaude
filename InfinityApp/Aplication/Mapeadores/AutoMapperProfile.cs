@@ -53,7 +53,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.Pista, opt => opt.MapFrom(src => src.Pista.HasValue ? src.Pista.ToString() : null))
             .ForMember(dest => dest.ObraNome, opt => opt.MapFrom(src => src.Obra.Nome))
-            .ForMember(dest => dest.ServicoDescricao, opt => opt.MapFrom(src => src.Servico.Descricao))
+            .ForMember(dest => dest.ServicoDescricao, opt => opt.MapFrom(src => src.Servico.Nome))
             .ForMember(dest => dest.TrechoDescricao, opt => opt.MapFrom(src => src.Trecho.Descricao))
             .ForMember(dest => dest.EquipamentoDescricao, opt => opt.MapFrom(src => src.EquipamentoExecucao.Descricao));
 
@@ -71,11 +71,11 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
             .ForMember(dest => dest.Pista, opt => opt.MapFrom(src => src.Pista.HasValue ? src.Pista.ToString() : null))
             .ForMember(dest => dest.ObraNome, opt => opt.MapFrom(src => src.Obra.Nome))
-            .ForMember(dest => dest.ServicoDescricao, opt => opt.MapFrom(src => src.Servico.Descricao))
+            .ForMember(dest => dest.ServicoDescricao, opt => opt.MapFrom(src => src.Servico.Nome))
             .ForMember(dest => dest.TrechoDescricao, opt => opt.MapFrom(src => src.Trecho.Descricao))
             .ForMember(dest => dest.EquipamentoDescricao, opt => opt.MapFrom(src => src.EquipamentoExecucao.Descricao))
-            .ForMember(dest => dest.DepositoOrigemDescricao, opt => opt.MapFrom(src => src.DepositoOrigem != null ? src.DepositoOrigem.Descricao : null))
-            .ForMember(dest => dest.DepositoDestinoDescricao, opt => opt.MapFrom(src => src.DepositoDestino != null ? src.DepositoDestino.Descricao : null));
+            .ForMember(dest => dest.DepositoOrigemDescricao, opt => opt.MapFrom(src => src.DepositoOrigem != null ? src.DepositoOrigem.Nome : null))
+            .ForMember(dest => dest.DepositoDestinoDescricao, opt => opt.MapFrom(src => src.DepositoDestino != null ? src.DepositoDestino.Nome : null));
 
         CreateMap<FichaViagemCBDto, FichaViagemCB>()
             .ForMember(dest => dest.Status, opt => opt.Ignore())

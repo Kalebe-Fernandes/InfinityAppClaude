@@ -11,7 +11,7 @@ namespace Domain.Entidades.Apontamentos;
 public class ApontamentoMicrorevestimento : EntidadeBase
 {
     public Guid FichaMicrorevestimentoId { get; set; }
-    public virtual FichaMicrorevestimento FichaMicrorevestimento { get; set; } = null!;
+    public FichaMicrorevestimento FichaMicrorevestimento { get; set; } = null!;
 
     public Lado Lado { get; set; }
     public int EstacaInicial { get; set; }
@@ -24,7 +24,7 @@ public class ApontamentoMicrorevestimento : EntidadeBase
     public decimal AreaM2 { get; set; }
     public decimal VolumeM3 { get; set; }
 
-    public virtual ICollection<ApontamentoMicrorevestimentoMaterial> Materiais { get; set; } = new List<ApontamentoMicrorevestimentoMaterial>();
+    public virtual ICollection<ApontamentoMicrorevestimentoMaterial> Materiais { get; set; } = [];
 
     public void Validar()
     {

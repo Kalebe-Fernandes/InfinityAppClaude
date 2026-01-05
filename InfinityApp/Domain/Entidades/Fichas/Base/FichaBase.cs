@@ -28,7 +28,7 @@ public abstract class FichaBase : EntidadeBase
     /// <summary>
     /// Navegação: Obra à qual a ficha pertence.
     /// </summary>
-    public virtual Obra Obra { get; set; } = null!;
+    public Obra Obra { get; set; } = null!;
 
     /// <summary>
     /// ID do serviço executado.
@@ -38,7 +38,7 @@ public abstract class FichaBase : EntidadeBase
     /// <summary>
     /// Navegação: Serviço executado.
     /// </summary>
-    public virtual Servico Servico { get; set; } = null!;
+    public Servico Servico { get; set; } = null!;
 
     /// <summary>
     /// ID do trecho onde o serviço foi executado.
@@ -48,7 +48,7 @@ public abstract class FichaBase : EntidadeBase
     /// <summary>
     /// Navegação: Trecho onde o serviço foi executado.
     /// </summary>
-    public virtual Trecho Trecho { get; set; } = null!;
+    public Trecho Trecho { get; set; } = null!;
 
     /// <summary>
     /// Pista onde o serviço foi executado (obrigatório apenas se trecho for pista dupla).
@@ -63,7 +63,7 @@ public abstract class FichaBase : EntidadeBase
     /// <summary>
     /// Navegação: Equipamento de execução utilizado.
     /// </summary>
-    public virtual Equipamento EquipamentoExecucao { get; set; } = null!;
+    public Equipamento EquipamentoExecucao { get; set; } = null!;
 
     /// <summary>
     /// Observações gerais sobre a execução do serviço.

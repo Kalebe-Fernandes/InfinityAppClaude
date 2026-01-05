@@ -11,7 +11,7 @@ namespace Domain.Entidades.Apontamentos;
 public class ApontamentoCBUQ : EntidadeBase
 {
     public Guid FichaCBUQId { get; set; }
-    public virtual FichaCBUQ FichaCBUQ { get; set; } = null!;
+    public FichaCBUQ FichaCBUQ { get; set; } = null!;
 
     public Lado Lado { get; set; }
     public int EstacaInicial { get; set; }
@@ -24,7 +24,7 @@ public class ApontamentoCBUQ : EntidadeBase
     public decimal AreaM2 { get; set; }
     public decimal VolumeM3 { get; set; }
 
-    public virtual ICollection<ApontamentoCBUQMaterial> Materiais { get; set; } = new List<ApontamentoCBUQMaterial>();
+    public virtual ICollection<ApontamentoCBUQMaterial> Materiais { get; set; } = [];
 
     public void Validar()
     {

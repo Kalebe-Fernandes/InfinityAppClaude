@@ -317,7 +317,6 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
             if (depositoExistente != null)
             {
                 depositoExistente.Nome = depositoApi.Nome;
-                depositoExistente.Nome = depositoApi.Descricao!;
                 depositoExistente.Provisorio = depositoApi.Provisorio;
 
                 if (depositoApi.Latitude.HasValue && depositoApi.Longitude.HasValue)
@@ -336,7 +335,6 @@ public class ServicoSincronizacaoPull(IApiInfinityClient apiClient, IUnitOfWork 
                 {
                     Codigo = depositoApi.Codigo,
                     Nome = depositoApi.Nome,
-                    Nome = depositoApi.Descricao!,
                     Provisorio = depositoApi.Provisorio
                 };
 

@@ -11,7 +11,7 @@ namespace Domain.Entidades.Apontamentos;
 public class ApontamentoLimpezaPista : EntidadeBase
 {
     public Guid FichaLimpezaPistaId { get; set; }
-    public virtual FichaLimpezaPista FichaLimpezaPista { get; set; } = null!;
+    public FichaLimpezaPista FichaLimpezaPista { get; set; } = null!;
 
     public Lado Lado { get; set; }
     public int EstacaInicial { get; set; }

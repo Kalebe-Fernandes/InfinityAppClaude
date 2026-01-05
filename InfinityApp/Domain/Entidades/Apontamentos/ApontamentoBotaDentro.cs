@@ -10,10 +10,10 @@ namespace Domain.Entidades.Apontamentos;
 public class ApontamentoBotaDentro : EntidadeBase
 {
     public Guid FichaBotaDentroId { get; set; }
-    public virtual FichaBotaDentro FichaBotaDentro { get; set; } = null!;
+    public FichaBotaDentro FichaBotaDentro { get; set; } = null!;
 
     public Guid MaterialId { get; set; }
-    public virtual Material Material { get; set; } = null!;
+    public Material Material { get; set; } = null!;
 
     public int QtdViagens { get; set; }
     public decimal VolumeM3 { get; set; }

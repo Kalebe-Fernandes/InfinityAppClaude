@@ -10,13 +10,13 @@ namespace Domain.Entidades.Apontamentos;
 public class ApontamentoViagemCB : EntidadeBase
 {
     public Guid FichaViagemCBId { get; set; }
-    public virtual FichaViagemCB FichaViagemCB { get; set; } = null!;
+    public FichaViagemCB FichaViagemCB { get; set; } = null!;
 
     public Guid EquipamentoId { get; set; }
-    public virtual Equipamento Equipamento { get; set; } = null!;
+    public Equipamento Equipamento { get; set; } = null!;
 
     public Guid MaterialId { get; set; }
-    public virtual Material Material { get; set; } = null!;
+    public Material Material { get; set; } = null!;
 
     public TimeSpan? HoraCarregamento { get; set; }
     public TimeSpan? HoraDescarregamento { get; set; }

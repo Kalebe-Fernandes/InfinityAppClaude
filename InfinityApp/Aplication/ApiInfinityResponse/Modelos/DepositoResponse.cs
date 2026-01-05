@@ -13,9 +13,6 @@ public class DepositoResponse
     [JsonPropertyName("nome")]
     public string Nome { get; set; } = string.Empty;
 
-    [JsonPropertyName("descricao")]
-    public string? Descricao { get; set; }
-
     [JsonPropertyName("codigoObra")]
     public string? CodigoObra { get; set; }
 
